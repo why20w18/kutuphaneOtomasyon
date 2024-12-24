@@ -578,6 +578,37 @@ public void SQL_Q_YazarGuncelle(int yazarID, String yazarAd, String yazarSoyad, 
     }
 }
 
+/////////////////////////////////T_YAYINEVI///////////////////////////////////
+/////////////////////////////////T_YAYINEVI///////////////////////////////////
+/////////////////////////////////T_YAYINEVI///////////////////////////////////
+
+public void SQL_Q_yayineviList(DefaultTableModel model){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT * FROM T_YAYINEVI;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet res = pst.executeQuery();
+        
+        while(res.next()){
+            int yayineviID = res.getInt("yayineviID");
+            String yayineviAd = res.getString("yayineviAd");
+            String yayineviUlke = res.getString("yayineviUlke");
+            
+            //jtable modeline yukleme pencereGUI_Componenetdeki fonksiyondan dogrudan pencereye aktarma
+            model.addRow(new Object[]{yayineviID,yayineviAd,yayineviUlke});
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+}
+
+public void SQL_Q_YayineviEkle(String yayineviAd , String yayineviUlke){
+    
+}
 
 
 

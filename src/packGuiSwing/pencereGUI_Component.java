@@ -78,12 +78,13 @@ enum CagrilacakFonksiyon{
     CF_COMBOBOX_FUNC_GET_SELECT_KATEGORI_ID, //doldurulan comboboxin idsini ceker
     
     //T_YAZAR
-    CF_BUTTON_YAZAR_EKLE,
-    CF_TABLE_YAZAR_LIST,
+    CF_BUTTON_YAZAR_EKLE,   //yazar ekleme
+    CF_TABLE_YAZAR_LIST, //yazar penceresindeki ilk tablo
     CF_BUTTON_YAZAR_CIKART,
     CF_BUTTON_YAZAR_GUNCELLE,
     
     //T_YAYINEVI
+    CF_TABLE_YAYINEVI_LIST, //yayinevi penceresindeki tablo
     
     
 }
@@ -718,6 +719,10 @@ public JTable addTable(String kolonAdlari[],int satirYukseklik,int yaziPunto,Cag
             CF_Caller.CF_TABLE_YAZAR_LIST_Func(databaseIslemler);
             break;
             
+        case CF_TABLE_YAYINEVI_LIST:
+               CF_Caller.CF_TABLE_YAYINEVI_LIST_Func(databaseIslemler);
+            break;
+            
             
         default:
             System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | addTable | pencereGUI_Component");
@@ -948,6 +953,10 @@ class tableFonksiyonlari{
     
     public void CF_TABLE_YAZAR_LIST_Func(DatabaseIslemler databaseIslemler){
         databaseIslemler.SQL_Q_YazarListele(tableModel);
+    }
+    
+    public void CF_TABLE_YAYINEVI_LIST_Func(DatabaseIslemler databaseIslemler){
+        databaseIslemler.SQL_Q_yayineviList(tableModel);
     }
     
 }//class tableFonksiyonlari

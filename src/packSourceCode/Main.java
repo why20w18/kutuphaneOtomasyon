@@ -13,7 +13,7 @@ public class Main {
         pencereGUI.setDebugOUTPUT(false);
         
         //VERITABANI BAGLANTISI
-        databaseBaglanti database = new databaseBaglanti("qw","kutuphaneOtomasyon2");
+        databaseBaglanti database = new databaseBaglanti("PASS","kutuphaneOtomasyon2");
         database.databaseBaglan();
         
         DatabaseIslemler dbIslemler = new DatabaseIslemler(database);
