@@ -4,6 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.*;
 
+enum PENCERE_KAPANIS{
+    TAMEMEN_KAPAT,
+    MEVCUT_KAPAT
+}
 
 public class pencereGUI{
     private JFrame newWindow;
@@ -24,17 +28,22 @@ public class pencereGUI{
     ////////////////////BU PAKETIN METODLARI///////////////////////
     
     //baska pakette pencere olusturmaya izin yok sadece bu paketteki classlar uzerinden
-    protected void InitPencereGUI(){
+    protected void InitPencereGUI(boolean subWindow){
         debugPrint("debugOUTPUT: pencereGUI.getStartFrame CAGRILDI");
         
         newWindow = new JFrame(this.pencereAdi);
         newWindow.setSize(pencereGenislik,pencereYukseklik);
+        
+        if(subWindow == false)
         newWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);       
+        else if(subWindow == true)
+        newWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
         newWindow.setVisible(true);
-        newWindow.setMinimumSize(new Dimension(600,400));
+        newWindow.setMinimumSize(new Dimension(800,400));
     }
 
-    protected JFrame getPencereGUIComponent_Addr(){
+    public JFrame getPencereGUIComponent_Addr(){
         return this.newWindow;
     }
     
@@ -75,10 +84,7 @@ public class pencereGUI{
     public void initLayout(){
         pencereGUI.debugPrint("INIT LAYOUT TEST");
         this.newWindow.setLayout(new BorderLayout());
-        
-        
-        
-
     }
+    
     
 }
