@@ -42,7 +42,7 @@ public class databaseBaglanti {
             System.out.println("VERITABANI BAGLANTISI BASARILI");
         }
         catch(ClassNotFoundException | SQLException exception){
-            Logger.getLogger("databaseBaglanti").log(Level.SEVERE,"VERITABANI BAGLANTISINDA HATA",exception);
+            Logger.getLogger("databaseBaglanti").log(Level.SEVERE,"VERITABANI BAGLANTISINDA CIDDI HATA",exception);
         }
     }
     

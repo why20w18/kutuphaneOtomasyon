@@ -24,7 +24,7 @@ import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_KUZEY;
 import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_NW_PERSONEL_YONETIM;
 import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_PERSONEL_CIKART;
 import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_PERSONEL_EKLE;
-import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_TANIMLANMADI;
+import static packGuiSwing.CagrilacakFonksiyon.CF_TANIMLANMADI;
 
 /*
 GUI KOMPONENT VE FONKSIYON BAGLAMA ADIMLARI
@@ -42,7 +42,7 @@ enum ButonPozisyon{
 }
 
 enum CagrilacakFonksiyon{
-    CF_BUTTON_TANIMLANMADI,
+    CF_TANIMLANMADI,
     CF_BUTTON_KUZEY,
     CF_BUTTON_GUNEY,
     
@@ -52,6 +52,8 @@ enum CagrilacakFonksiyon{
     CF_BUTTON_NW_KATEGORI_TABLOSU,//kategori tablosunu iceren pencereyi baslatir | personel yonetim icinde
     CF_BUTTON_NW_YAZAR_YONETIM,   //mainGUI icindeki yazar yonetim penceresini baslatir
     CF_BUTTON_NW_YAYINEVI_YONETIM, //mainGUI yayinevi init
+    CF_BUTTON_NW_ODUNC_YONETIM, //odunc yonetim penceresi baslat
+    CF_BUTTON_NW_KITAP_YAZAR_TABLOSU,
     
     
     //T_PERSONEL
@@ -64,11 +66,9 @@ enum CagrilacakFonksiyon{
     CF_TABLE_KITAP_LIST,          //databaseIslemlerdeki kitap list fonksiyonunu calistirir
     CF_TABLE_GET_MEVCUT_KATEGORILER, //mevcut kategorileri getirme
     
-    CF_BUTTON_KATEGORI_EKLE,      //kitap kategorileri ekleme
-    CF_BUTTON_KATEGORI_CIKART,     //kitap kategori cikartma
-    
-    //KITABIN KATEGORISINI GUNCELLEYECEK KATEGORI TABLOSUNU DEGIL
-    CF_BUTTON_KATEGORI_GUNCELLE,   //kitap kategori guncelleme  ///TANIMLANMADI
+    CF_BUTTON_KATEGORI_EKLE,      //BOSA CIKAN ENUMLAR
+    CF_BUTTON_KATEGORI_CIKART,     //BOSA CIKAN ENUMLAR
+    CF_BUTTON_KATEGORI_GUNCELLE,   //BOSA CIKAN ENUMLAR
     
     CF_BUTTON_KATEGORI_EKLE_KATEGORITABLOSU, //kategori ekler ama kategori tablosu icin ozellesmistir sadece parametre degisir
     CF_BUTTON_KATEGORI_CIKART_KATEGORITABLOSU,
@@ -76,6 +76,17 @@ enum CagrilacakFonksiyon{
     
     CF_COMBOBOX_DOLDUR_MEVCUT_KATEGORILER, //kitap ekle kisminda combobox mevcut kategorileri cekebilsin
     CF_COMBOBOX_FUNC_GET_SELECT_KATEGORI_ID, //doldurulan comboboxin idsini ceker
+    CF_COMBOBOX_DOLDUR_MEVCUT_YAYINEVLERI,
+    CF_COMBOBOX_FUNC_GET_SELECT_YAYINEVI_ID,
+    
+    CF_TABLE_KITAPYAZAR_JOINT_LIST,
+    
+    CF_BUTTON_KITAP_EKLE,
+    CF_BUTTON_KITAP_CIKART,
+    CF_BUTTON_YAZARI_DEGISTIR,
+    CF_BUTTON_KITABI_DEGISTIR,
+    CF_BUTTON_KITAP_GUNCELLE,
+    
     
     //T_YAZAR
     CF_BUTTON_YAZAR_EKLE,   //yazar ekleme
@@ -85,6 +96,13 @@ enum CagrilacakFonksiyon{
     
     //T_YAYINEVI
     CF_TABLE_YAYINEVI_LIST, //yayinevi penceresindeki tablo
+    CF_BUTTON_YAYINEVI_EKLE,
+    CF_BUTTON_YAYINEVI_CIKART,
+    CF_BUTTON_YAYINEVI_GUNCELLE,
+    
+    //T_ODUNC
+    CF_TABLE_ODUNC_LIST,
+    
     
     
 }
@@ -147,7 +165,7 @@ public class pencereGUI_Component {
             public void actionPerformed(ActionEvent e) {
                 
                 switch(butonFonksiyonu){
-                    case CF_BUTTON_TANIMLANMADI:
+                    case CF_TANIMLANMADI:
                         CF_Caller.CF_TANIMLANMADI_Func();
                         break;
                     
@@ -178,6 +196,14 @@ public class pencereGUI_Component {
                         CF_Caller.CF_BUTTON_NW_YAYINEVI_YONETIM_Func();
                         break;
                         
+                    case CF_BUTTON_NW_ODUNC_YONETIM:
+                        CF_Caller.CF_BUTTON_NW_ODUNC_YONETIM_Func();
+                        break;
+                        
+                    case CF_BUTTON_NW_KITAP_YAZAR_TABLOSU:
+                        CF_Caller.CF_BUTTON_NW_KITAP_YAZAR_TABLOSU_Func();
+                        break;
+                        
                                 default:
             System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | addButton | pencereGUI_Component");
             break;
@@ -194,7 +220,28 @@ public class pencereGUI_Component {
 
         return button;
     }
-    
+    /*
+    addButtonParams HAKKINDA:
+        +DEKLERASYON        :   addButtonParams(String buttonText , ButonPozisyon butonPozisyon , CagrilacakFonksiyon butonFonksiyonu,String girdilerString[])
+        +addButton'dan FARKI:   addButton sadece parametre almayan fonksiyonlari butona basildigi anda calistirabilirken addButtonParams fonksiyonu icinde 
+                                parametre alan fonksiyonlari calistirmak amaclanarak yazilmistir
+        
+        +CALISMA MEKANIZMASI:   bunu yapmak icin ilk once TextFieldlarin(Kullanicinin girdi girdiği GUI komponenti) tum girdilerinin (ki bu textfieldlarda addTextField 
+                                fonksiyonuyla olusturuluyor pencerede dogru konuma yerlestirilebilmesi icin) dinlenmesi gerekiyor MEVCUT PENCERE KAÇ ADET TEXTFIELD VARSA
+                                bunun icin ListenerTextField(ArrayList<JTextField> textFieldsArrayList, String[] girdiListesi) fonksiyonunu kullanacagiz , ilk parametreyi
+                                saglamak bir ArrayList icine olusturulan tum TextFieldlari attiktan sonra ikinci parametre icine kullanicinin textfield icine girdi her inputu
+                                girdiListesi string arrayinin indexine yerlestiriyor sonrasinda girdiListesi string arrayi artik kullanici inputlarini ve hangi textfielda 
+                                girdigimizi gosterir haldeyken bunu addButtonParams fonksiyonuna parametre olarak yolluyoruz cunku her butona ayri bir fonksiyon atadik ve
+                                bu fonksiyonlar kullanicinin textfieldlara girdigi parametrelere gore islem yapiyor ONEMLI NOKTA buton fonksiyonun parametresi double=personelMaas
+                                yada int=yayineviID gibi olabilir bu durumda wrapper parse ile cevirmemiz gerekecektir yine kullanici null yada bosluk iceren girdiler
+                                girebilir yada hatayla bunları deneyebilir veritabaninda bunlarin probleme yol acmamasi icin TEMEL SEVIYE guvenlik onlemi olarak boolean ceviren
+                                ayri bir fonksiyon daha yazilmistir !checkGirdiStringISNULL_ISEMPTY => ilk parametre kontrole baslanacak girdiListesi indexi ve 
+                                ikinci parametre hangi indexe kadar kontrol edecegidir 
+                                EKLEME DURUMUNDA ---> ID disinda sona kadar kontrol PARAM1=1<PARAM2=girdiListe.length
+                                CIKARTMA DURUMUNDA--> SADECE ID KONTROLU PARAM1=0 ve PARAM2=1
+                                ÖRNEGIN:
+                                yayineviYonetim Classinda 3 adet textfield var soldan saga indexleri 0,1,2 seklinde girdiListesi string arrayine yerlestirilecektir
+    */
      public JButton addButtonParams(String buttonText , ButonPozisyon butonPozisyon , CagrilacakFonksiyon butonFonksiyonu,String girdilerString[]){
        JButton button = new JButton(buttonText);
        button.setMinimumSize(new Dimension(100, 50));
@@ -210,7 +257,7 @@ public class pencereGUI_Component {
             public void actionPerformed(ActionEvent e) {
                 boolean paramControl = true;
                 switch(butonFonksiyonu){
-                    case CF_BUTTON_TANIMLANMADI:
+                    case CF_TANIMLANMADI:
                         CF_Caller.CF_TANIMLANMADI_Func();
                         break;
                     
@@ -225,19 +272,12 @@ public class pencereGUI_Component {
                     
                     case CF_BUTTON_PERSONEL_EKLE:
                         boolean paramCond2 = true;
-                        for(int i = 1 ; i < 6 ; i++){
-                            if(girdilerString[i] == null || girdilerString[i].isEmpty()){
-                              CF_Caller.messageBoxOK("EKSIK PERSONEL BILGISI !");
-                              paramControl = false;
-                              paramCond2 = false;
-                              break;
+                        if(!checkGirdiStringISNULL_ISEMPTY(1,girdilerString.length, girdilerString, CF_Caller, "EKSIK KOLONLAR VAR BU SEKILDE EKLEMEYE IZIN YOK !"))
+                            if(paramControl == true && ((girdilerString[4].equals("HIZMETLI") ) || (girdilerString[4].equals("YONETICI")))){
+                                CF_Caller.CF_BUTTON_PERSONEL_EKLE_Func(girdilerString[1],girdilerString[2],Double.parseDouble(girdilerString[3]),girdilerString[4],girdilerString[5]);
+                                CF_Caller.messageBoxOK("PERSONEL EKLENDI !");
+                                 paramCond2 = false;
                             }
-                        }
-                        if(paramControl == true && ((girdilerString[4].equals("HIZMETLI") ) || (girdilerString[4].equals("YONETICI")))){
-                            CF_Caller.CF_BUTTON_PERSONEL_EKLE_Func(girdilerString[1],girdilerString[2],Double.parseDouble(girdilerString[3]),girdilerString[4],girdilerString[5]);
-                            CF_Caller.messageBoxOK("PERSONEL EKLENDI !");
-                             paramCond2 = false;
-                        }
                       
                         else if(paramCond2){
                             CF_Caller.messageBoxOK("PERSONEL TURU HIZMETLI VEYA YONETICI OLMALIDIR");
@@ -353,7 +393,42 @@ public class pencereGUI_Component {
                         CF_Caller.CF_BUTTON_YAZAR_GUNCELLE_Func(Integer.parseInt(girdilerString[0]), girdilerString[1], girdilerString[2], girdilerString[3]);
                                 break;
                         
+                    case CF_BUTTON_YAYINEVI_EKLE:
+                        paramControl = true;
                         
+                        if(!checkGirdiStringISNULL_ISEMPTY(1,girdilerString.length, girdilerString, CF_Caller, "EKSIK KOLONLAR VAR BU SEKILDE EKLEMEYE IZIN YOK !")){
+                            CF_Caller.CF_BUTTON_YAYINEVI_EKLE_Func(girdilerString[1], girdilerString[2]);
+                            CF_Caller.messageBoxOK("YAYINEVI EKLENMISTIR !");
+                        }
+                        break;
+                        
+                    case CF_BUTTON_YAYINEVI_CIKART:
+                         if(!checkGirdiStringISNULL_ISEMPTY(0,1, girdilerString, CF_Caller, "yayıneviID GIRILMEDEN CIKARTMA YAPMAYA IZIN YOK !")){
+                            CF_Caller.CF_BUTTON_YAYINEVI_CIKART_Func(Integer.parseInt(girdilerString[0]));
+                            CF_Caller.messageBoxOK("YAYINEVI CIKARTILMISTIR !");
+                        }
+                        break;
+                    case CF_BUTTON_YAYINEVI_GUNCELLE:
+                      //  if(!checkGirdiStringISNULL_ISEMPTY(0, girdilerString.length,girdilerString,CF_Caller, "TUM KOLONLARI GIRMEDEN GUNCELLEME YAPMAYA IZIN YOK !")){
+                        //ZATEN GUNCELLEMEDE TUM TEXTFIELDLARI DOLDURMAK GIBI BIR ZORUNLULUK YOKTUR  
+                        CF_Caller.CF_BUTTON_YAYINEVI_GUNCELLE_Func(Integer.parseInt(girdilerString[0]), girdilerString[1], girdilerString[2]);
+                            CF_Caller.messageBoxOK("YAYINEVI GUNCELLENMISTIR !");
+                        //}
+                        break;
+                        
+                    case CF_BUTTON_KITAP_CIKART:
+                        CF_Caller.CF_BUTTON_KITAP_CIKART_Func(Integer.parseInt(girdilerString[0]));
+                        break;
+                        
+                    case CF_BUTTON_YAZARI_DEGISTIR:
+                        CF_Caller.CF_BUTTON_YAZARI_DEGISTIR_Func(Integer.parseInt(girdilerString[0]), Integer.parseInt(girdilerString[1]));
+                        break;
+                    
+                    case CF_BUTTON_KITABI_DEGISTIR:
+                        CF_Caller.CF_BUTTON_KITABI_DEGISTIR_Func(Integer.parseInt(girdilerString[0]), Integer.parseInt(girdilerString[1]));
+                        break;
+                        
+                   
                         
                         
                         
@@ -370,6 +445,100 @@ public class pencereGUI_Component {
         return button;
     }
     
+     
+       public JButton addButtonParams(String buttonText , ButonPozisyon butonPozisyon , CagrilacakFonksiyon butonFonksiyonu,String girdilerString[] ,int girdilerInteger[]){
+       JButton button = new JButton(buttonText);
+       button.setMinimumSize(new Dimension(100, 50));
+       komponentPozisyonlandiricisi(button, butonPozisyon); 
+
+
+
+       butonFonksiyonlari CF_Caller = new butonFonksiyonlari(button, mevcutPencere,databaseIslemler);
+       
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean paramControl = true;
+                switch(butonFonksiyonu){
+                    case CF_TANIMLANMADI:
+                        CF_Caller.CF_TANIMLANMADI_Func();
+                        break;
+                 
+                        
+                    case CF_BUTTON_KITAP_EKLE:
+                        System.out.println("girdilerInteger[0]=KATEGORI_ID="+girdilerInteger[0]+"       girdilerInteger[1]=YAYIN_EVI_ID="+girdilerInteger[1]);
+                        System.out.println("GIRDILERSTRING[1]=KITAP_AD  " + girdilerString[1]);   //KITAP AD          STRING
+                        System.out.println("GIRDILERSTRING[2]=KITAP_STOK  " + girdilerString[2]);   //KITAP STOK        INT
+                        System.out.println("GIRDILERSTRING[3]=KITAP_ISBN  " + girdilerString[3]);   //KITAP FIYAT       DOUBLE
+                        System.out.println("GIRDILERSTRING[4]=KITAP_FIYAT  " + girdilerString[4]);   //KITAP ISBN        STRING
+                        System.out.println("GIRDILERSTRING[5]=KITAP_SAYFA  " + girdilerString[5]);   //KITAP SAYFA_SAY   INT
+                        System.out.println("GIRDILERSTRING[6]=YAZAR_AD  " + girdilerString[6]);   //YAZAR AD          STRING
+                        System.out.println("GIRDILERSTRING[7]=YAZAR_SOYAD  " + girdilerString[7]);   //YAZAR SOYAD       STRING
+
+                        /*
+                        
+public void CF_BUTTON_KITAP_EKLE_Func(
+            String kitapAd,
+            int kitapStok,
+            String ISBN,
+            int kitapSayfaSayisi,
+            double kitapFiyat,
+            String yazarAd,
+            String yazarSoyad,
+            int kategoriID,
+            int yayineviID)                        
+                        */
+                        
+                        
+                        if(!checkGirdiStringISNULL_ISEMPTY(1, girdilerString.length, girdilerString, CF_Caller, "EKSIK PARAMETRELERLE EKLEME YAPAMAZSINIZ"))
+                         CF_Caller.CF_BUTTON_KITAP_EKLE_Func(
+                                                            girdilerString[1], //kitap_ad
+                                                            Integer.parseInt(girdilerString[2]), //kitapStok 
+                                                            girdilerString[3], //isbn
+                                                            Integer.parseInt(girdilerString[4]), //sayfa sayisi 
+                                                            Double.parseDouble(girdilerString[5]), //fiyat
+                                                            girdilerString[6],//yazarad 
+                                                            girdilerString[7], //yazarsoyad 
+                                                            girdilerInteger[0],//kategoriid
+                                                            girdilerInteger[1]//yayineviid
+                                                            );
+                        
+                        System.out.println("KITAP EKLEME FONK CAGRILDI");
+                        break;
+                        
+  
+             case CF_BUTTON_KITAP_GUNCELLE:
+                 if(!checkGirdiStringISNULL_ISEMPTY(0, girdilerString.length, girdilerString, CF_Caller, "EKSIK KOLONGIRDIDIGINIZ ICIN GUNCELLEMEYE IZIN YOKTUR !"))
+                        CF_Caller.CF_BUTTON_KITAP_GUNCELLE_Func(Integer.parseInt(girdilerString[0]),
+                                girdilerString[1],
+                                Integer.parseInt(girdilerString[2]),
+                                girdilerString[3],
+                                Integer.parseInt(girdilerString[4]),
+                                Double.parseDouble(girdilerString[5]),
+                                girdilerString[6],
+                                girdilerString[7],
+                                girdilerInteger[0],
+                                girdilerInteger[1]
+                        );
+                        break;
+            
+            
+                                              
+                        
+                        default:
+            System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | addButtonParams | pencereGUI_Component");
+            break;
+            
+            
+                }
+            }
+        });
+        
+  
+
+        return button;
+    }
     
     
     public JTextField addTextField(String baslangicText , int maxKapasite , int yaziPunto , Color arkaplanRenk, ButonPozisyon textFieldPozisyon){
@@ -427,7 +596,17 @@ public class pencereGUI_Component {
     }
 }
     
-    void all_input_textFieldButton(ArrayList<JTextField> textfieldArrayList,String girdiler[],JButton myButton){
+public boolean checkGirdiStringISNULL_ISEMPTY(int startIndex,int argc , String girdilerString[],butonFonksiyonlari CF_Caller , String MSG){
+    for(int i = startIndex ; i < argc ; i++){
+        if(girdilerString[i] == null || girdilerString[i].isEmpty()){
+            CF_Caller.messageBoxOK(MSG);
+                return true;
+                    }
+            }
+return false; 
+}
+    
+void all_input_textFieldButton(ArrayList<JTextField> textfieldArrayList,String girdiler[],JButton myButton){
     myButton.addActionListener(new ActionListener() {
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -441,7 +620,25 @@ public class pencereGUI_Component {
         }
     }
 });
- }
+}
+
+
+void all_input_comboBoxButton(ArrayList<JComboBox<String>> comboBoxArrayList, String[] girdiler, JButton myButton) {
+    myButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for (int i = 0; i < comboBoxArrayList.size(); i++) {
+                girdiler[i] = comboBoxArrayList.get(i).getSelectedItem().toString();
+            }
+            
+            System.out.println("Combobox girdileri:");
+            for (String girdi : girdiler) {
+                System.out.println(girdi);
+            }
+        }
+    });
+}
+
     
     public JComboBox<String> addDoldurucuComboBox(String comboboxSecenekleri[],int genislik,int yukseklik,int yaziPunto,ButonPozisyon pozisyon){
         JComboBox<String> comboBox = new JComboBox<>();
@@ -490,7 +687,11 @@ public class pencereGUI_Component {
         comboboxFonksiyonlariSTR CF_Caller = new comboboxFonksiyonlariSTR(comboBox, mevcutPencere);
         switch(CF_COMBOBOX_DOLDUR_){
             case CF_COMBOBOX_DOLDUR_MEVCUT_KATEGORILER:
-                CF_Caller.CF_COMBOBOX_DOLDUR_MEVCUT_KATEGORILER_Func(databaseIslemler);
+                CF_Caller.CF_COMBOBOX_DOLDURURUCU_Func(databaseIslemler,"kategoriAd","T_KATEGORI");
+                break;
+                
+            case CF_COMBOBOX_DOLDUR_MEVCUT_YAYINEVLERI:
+                CF_Caller.CF_COMBOBOX_DOLDURURUCU_Func(databaseIslemler, "yayineviAd", "T_YAYINEVI");
                 break;
                 
           default:
@@ -508,23 +709,28 @@ public class pencereGUI_Component {
      switch(CF_COMBOBOX_FUNC_){
          case CF_COMBOBOX_FUNC_GET_SELECT_KATEGORI_ID:
              return CF_Caller.CF_COMBOBOX_FUNC_GET_SELECT_KATEGORI_ID_Func(databaseIslemler);
-         
+        
+         case CF_COMBOBOX_FUNC_GET_SELECT_YAYINEVI_ID:
+             return CF_Caller.CF_COMBOBOX_FUNC_GET_SELECT_YAYINEVI_ID_Func(databaseIslemler);
+             
+             
          default:
             System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | setCombobox | pencereGUI_Component");
             break;
+            
+            
              
      }
      
      return 0;
  }
  
- public void setListenerCombobox(JComboBox<String> comboBox , CagrilacakFonksiyon CF_COMBOBOX_FUNC_){
-        comboBox.addActionListener(e -> {
-                    comboboxRetID = setCombobox(comboBox,CF_COMBOBOX_FUNC_);
-                    System.out.println("YAPILAN COMBOBOX SECIM ID : " + comboboxRetID);
-                    
-            });
- }
+ public void setListenerCombobox(JComboBox<String> comboBox, CagrilacakFonksiyon CF_COMBOBOX_FUNC_, int girdiler[], int yerlesmeIndex) {
+    comboBox.addActionListener(e -> {
+        girdiler[yerlesmeIndex] = setCombobox(comboBox, CF_COMBOBOX_FUNC_);
+        System.out.println("YAPILAN COMBOBOX SECIM ID : " + girdiler[yerlesmeIndex]);
+    });
+}
 
     
  public <T> void komponentPozisyonlandiricisi(T object , ButonPozisyon pozisyon){
@@ -723,6 +929,13 @@ public JTable addTable(String kolonAdlari[],int satirYukseklik,int yaziPunto,Cag
                CF_Caller.CF_TABLE_YAYINEVI_LIST_Func(databaseIslemler);
             break;
             
+        case CF_TABLE_KITAPYAZAR_JOINT_LIST:
+            CF_Caller.CF_TABLE_KITAPYAZAR_JOINT_LIST_Func(databaseIslemler);
+            break;
+            
+        case CF_TABLE_ODUNC_LIST:
+            
+            break;
             
         default:
             System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | addTable | pencereGUI_Component");
@@ -858,6 +1071,16 @@ class butonFonksiyonlari{
         yayineviyonetim_frame.inityayineviYonetimGUI(true);
     }
     
+    public void CF_BUTTON_NW_ODUNC_YONETIM_Func(){
+        oduncYonetimGUI oduncyonetim_frame = new oduncYonetimGUI(databaseIslemler);
+        oduncyonetim_frame.initoduncYonetimGUI(true);
+    }
+    
+    public void CF_BUTTON_NW_KITAP_YAZAR_TABLOSU_Func(){
+        kitapYazarTablosuGUI kitapyazartablosu_frame = new kitapYazarTablosuGUI(databaseIslemler);
+        kitapyazartablosu_frame.initkitapYazarTablosuGUI(true);
+    }
+    
     
     public void CF_BUTTON_PERSONEL_EKLE_Func(String personelAd,String personelSoyad , double personelMaas,String personelTuru,String EkBilgi){
         databaseIslemler.SQL_Q_personelEkle(personelAd, personelSoyad, personelMaas, personelTuru,EkBilgi);
@@ -895,6 +1118,50 @@ class butonFonksiyonlari{
         databaseIslemler.SQL_Q_YazarGuncelle(yazarID, yazarAd, yazarSoyad, yazarUlke);
     }
         
+    public void CF_BUTTON_YAYINEVI_EKLE_Func(String yayineviAd,String yayineviUlke){
+        databaseIslemler.SQL_Q_YayineviEkle(yayineviAd, yayineviUlke);
+    }
+    
+    public void CF_BUTTON_YAYINEVI_CIKART_Func(int yayineviID){
+        databaseIslemler.SQL_Q_YayineviCikart(yayineviID);
+    }
+    
+    public void CF_BUTTON_YAYINEVI_GUNCELLE_Func(int yayineviID , String yayineviAd , String yayineviUlke){
+        databaseIslemler.SQL_Q_YayineviGuncelle(yayineviID, yayineviAd, yayineviUlke);
+    }
+    
+    public void CF_BUTTON_KITAP_EKLE_Func(
+            String kitapAd,
+            int kitapStok,
+            String ISBN,
+            int kitapSayfaSayisi,
+            double kitapFiyat,
+            String yazarAd,
+            String yazarSoyad,
+            int kategoriID,
+            int yayineviID){
+        databaseIslemler.SQL_Q_KitapEkle(kitapAd, kitapStok, kitapFiyat, ISBN, kitapSayfaSayisi, kategoriID, yayineviID, yazarAd, yazarSoyad);
+    }
+    
+    public void CF_BUTTON_KITAP_CIKART_Func(int kitapID){
+        databaseIslemler.SQL_Q_kitapCikart(kitapID);
+    }
+    
+    public void CF_BUTTON_YAZARI_DEGISTIR_Func(int kitapID , int yazarID){
+        databaseIslemler.SQL_kitapYazarTablosu_yazariDegistir(kitapID, yazarID);
+    }
+    
+    public void CF_BUTTON_KITABI_DEGISTIR_Func(int kitapID , int yazarID){
+        databaseIslemler.SQL_kitapYazarTablosu_kitabiDegistir(kitapID, yazarID);
+    }
+    
+    public void CF_BUTTON_KITAP_GUNCELLE_Func(int kitapID, String kitapAd, int kitapStok, String kitapISBN, int kitapSayfaSayisi, 
+                                double kitapFiyat, String yazarAd, String yazarSoyad,int kategoriID, int yayineviID){
+        
+    
+        databaseIslemler.SQL_Q_kitapGuncelle(kitapID, kitapAd, kitapStok, kitapISBN, kitapSayfaSayisi, kitapFiyat, kategoriID, yayineviID, yazarAd, yazarSoyad);
+    }
+    
     
 }//class butonFonksiyonlari 
 
@@ -911,13 +1178,19 @@ class comboboxFonksiyonlariSTR{
         this.mevcutPencere = mevcutPencere;
     }
     
-    public void CF_COMBOBOX_DOLDUR_MEVCUT_KATEGORILER_Func(DatabaseIslemler databaseIslemler){
-        databaseIslemler.SQL_Q_ComboboxMevcutKategorilerDoldur(comboBox);
+    public void CF_COMBOBOX_DOLDURURUCU_Func(DatabaseIslemler databaseIslemler,String kolonAd , String tabloAd){
+        databaseIslemler.SQL_Q_ComboboxDoldurCOL_TABLO(comboBox,kolonAd,tabloAd);
     }
     
     public int CF_COMBOBOX_FUNC_GET_SELECT_KATEGORI_ID_Func(DatabaseIslemler databaseIslemler){
-        return databaseIslemler.SQL_Q_ComboboxSecilenIDKategoriler(comboBox);
+        return databaseIslemler.SQL_Q_ComboboxSecilenID(comboBox,"kategoriID","kategoriAd","T_KATEGORI");
+        //secilen kategoriAd'a gore kategori id cevirecek
     }
+    
+    public int CF_COMBOBOX_FUNC_GET_SELECT_YAYINEVI_ID_Func(DatabaseIslemler databaseIslemler){
+        return databaseIslemler.SQL_Q_ComboboxSecilenID(comboBox, "yayineviID", "yayineviAd", "T_YAYINEVI");
+    }
+    
 }
 
 
@@ -957,6 +1230,13 @@ class tableFonksiyonlari{
     
     public void CF_TABLE_YAYINEVI_LIST_Func(DatabaseIslemler databaseIslemler){
         databaseIslemler.SQL_Q_yayineviList(tableModel);
+    }
+    
+    public void CF_TABLE_KITAPYAZAR_JOINT_LIST_Func(DatabaseIslemler databaseIslemler){
+        databaseIslemler.SQL_Q_kitapYazarTablosuList(tableModel);
+    }
+    public void CF_TABLE_ODUNC_LIST_Func(DatabaseIslemler databaseIslemler){
+        databaseIslemler.SQL_Q_oduncYonetimListesi(tableModel);
     }
     
 }//class tableFonksiyonlari

@@ -45,11 +45,10 @@ public class mainGUI {
             JButton buton2 = hf_component.addButton("Yazar Yönetimi",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_NW_YAZAR_YONETIM);
             JButton buton9 = hf_component.addButton("Yayınevi Yönetimi",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_NW_YAYINEVI_YONETIM);
 
-            //JButton buton3 = hf_component.addButton("HIZLI1ERISIM",ButonPozisyon.SAG,CagrilacakFonksiyon.CF_TANIMLANMADI);
-            JButton buton4 = hf_component.addButton("Ödünç Yönetimi",ButonPozisyon.SOL,CagrilacakFonksiyon.CF_BUTTON_TANIMLANMADI);
+            JButton buton4 = hf_component.addButton("Ödünç Yönetimi",ButonPozisyon.SOL,CagrilacakFonksiyon.CF_BUTTON_NW_ODUNC_YONETIM);
             JButton buton7 = hf_component.addButton("Kitap Yönetimi",ButonPozisyon.SOL,CagrilacakFonksiyon.CF_BUTTON_NW_KITAP_YONETIM);
             
-
+            
             
             //JButton buton5 = hf_component.addButton("HIZLI2ERISIM",ButonPozisyon.ORTA,CagrilacakFonksiyon.CF_TANIMLANMADI);
             //JButton buton6 = hf_component.addButton("HIZLI3ERISIM",ButonPozisyon.ORTA,CagrilacakFonksiyon.CF_TANIMLANMADI);

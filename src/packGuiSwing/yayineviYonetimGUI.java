@@ -46,16 +46,16 @@ public class yayineviYonetimGUI {
         
         if(isLayoutActive == true){
             yayineviyonetim_frame.initLayout();
-            yaey_component.infoBar("sadece kategori adi girerek ekleme yapilir", 
-                    "sadece kategori adi girerek cikartma yapilir",
-                    "hem kategori id hem kategori adi girerek guncelleme yapilir");
+            yaey_component.infoBar("yayineviAd VE yayineviUlke GİRİLEREK EKLEME YAPILIR", 
+                    "SADECE yayineviID GİRİLEREK SİLME YAPILIR",
+                    "yayineviID GIRILIR VE ISTENEN KOLONLAR GIRILEREK GUNCELLEME YAPILIR");
             
          
             
                                      //0         1              2
             String kolonIsimleri[] = { "ID", "Yayınevi Adı","Yayınevi Ülke"};
           
-            JTable jtable_kitapListesi = yaey_component.addTable(kolonIsimleri,30,15,CagrilacakFonksiyon.CF_BUTTON_TANIMLANMADI);
+            JTable jtable_kitapListesi = yaey_component.addTable(kolonIsimleri,30,15,CagrilacakFonksiyon.CF_TABLE_YAYINEVI_LIST);
             
             //EKLEME CIKARTMA
             JTextField tfield_yaeyID = yaey_component.addTextField("", 25, ButonPozisyon.UST);
@@ -74,14 +74,14 @@ public class yayineviYonetimGUI {
             
             
             //KATEGORI ISLEMLERI
-            JButton button_kategoriEkle = yaey_component.addButtonParams("Yayınevi Ekle", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_KATEGORI_EKLE_KATEGORITABLOSU,girdiler);
-            yaey_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kategoriEkle);
+            JButton button_yaeyEkle = yaey_component.addButtonParams("Yayınevi Ekle", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_YAYINEVI_EKLE,girdiler);
+            yaey_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_yaeyEkle);
             
-            JButton button_kategoriCikart = yaey_component.addButtonParams("Yayınevi Çıkart", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_KATEGORI_CIKART_KATEGORITABLOSU,girdiler);
-            yaey_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kategoriCikart);
+            JButton button_yaeyCikart = yaey_component.addButtonParams("Yayınevi Çıkart", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_YAYINEVI_CIKART,girdiler);
+            yaey_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_yaeyCikart);
             
-            JButton button_kategoriGuncelle = yaey_component.addButtonParams("Yayınevi Güncelle", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_KATEGORI_GUNCELLE_KATEGORITABLOSU,girdiler);
-            yaey_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kategoriGuncelle);
+            JButton button_yaeyGuncelle = yaey_component.addButtonParams("Yayınevi Güncelle", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_YAYINEVI_GUNCELLE,girdiler);
+            yaey_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_yaeyGuncelle);
             
         }
             
