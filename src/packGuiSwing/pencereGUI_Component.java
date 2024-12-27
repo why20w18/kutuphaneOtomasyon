@@ -38,7 +38,8 @@ enum ButonPozisyon{
         ALT, 
         SAG, 
         SOL, 
-        ORTA
+        ORTA,
+        BOSLUK_TAMAMI,
 }
 
 enum CagrilacakFonksiyon{
@@ -148,6 +149,88 @@ public class pencereGUI_Component {
         northPanel.setPreferredSize(new Dimension(0,50));
         southPanel.setPreferredSize(new Dimension(0,50));
     }
+    
+    public JTextArea konsolEkran(ButonPozisyon pozisyon){
+        JTextArea konsol = new JTextArea();
+        komponentPozisyonlandiricisi(konsol, pozisyon);
+        
+        konsol.setEditable(false);
+        konsol.setFont(new Font("Courier New", Font.BOLD, 15));
+
+        konsol.setBackground(Color.BLACK);
+        konsol.setForeground(Color.WHITE);
+        
+        JScrollPane scroll = new JScrollPane(konsol);
+        komponentPozisyonlandiricisi(scroll, pozisyon);
+        
+        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+     
+        return konsol;
+    }
+    
+    public void enterListener(JTextField cmdInput , JTextArea konsol){
+        cmdInput.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String inputText = cmdInput.getText();
+                if (!inputText.isEmpty()){
+                    konsol.append("KULLANICI_ISTEK >> " + inputText + "\n");
+                    konsol.append("\n[VERİTABANI]:" + komutIslem(inputText,konsol,15) + "\n\n");
+                    cmdInput.setText("");
+                    konsol.setCaretPosition(konsol.getDocument().getLength());
+                }
+            }
+        });
+    }
+    
+    public String komutIslem(String command,JTextArea konsol,int varsayilanPunto){
+        
+        
+        if ("help".equalsIgnoreCase(command)){
+            return "\n-----KOMUTLAR-----\n"+
+                   "KOMUT_1 -> sql:SQL_QUERY :: DML KOMUTLARINI DOĞRUDAN KONSOLDAN ÇALIŞTIRABİLİRSİNİZ\n"+
+                   "KOMUT_2 -> tab :: VERİTABANINDAKİ TABLO ADLARINI ÇEVİRİR\n"+
+                   "KOMUT_3 -> col TABLO_ADI :: MEVCUT TABLONUN NİTELİKLERİNİ ÇEVİRİR\n";
+                    
+        }
+       
+        else if ("exit".equalsIgnoreCase(command)){
+            databaseIslemler.baglantiyiKes();
+            System.exit(0);
+        }
+        
+        else if("cls".equalsIgnoreCase(command)){
+            konsol.setText("");
+            return "KONSOL TEMİZLENDİ";
+        }
+        else if("+".equals(command)){
+          konsol.setFont(new Font("Courier New", Font.BOLD, varsayilanPunto + 5));
+          return "+ PUNTO="+varsayilanPunto;
+        }
+        else if("-".equals(command)){
+            konsol.setFont(new Font("Courier New", Font.BOLD, varsayilanPunto - 5));
+            return "- PUNTO="+varsayilanPunto;
+        }
+        
+        else if("tab".equalsIgnoreCase(command)){
+            return "\n"+databaseIslemler.getTab().toString();
+        }
+        
+        else if("col".equalsIgnoreCase(command.substring(0,3))){
+            String tabloAdi = command.substring(3).trim();
+            return "\n"+databaseIslemler.SQL_Q_EXEC_Query("DESCRIBE "+tabloAdi);
+        }
+        
+        else if("sql:".equalsIgnoreCase(command.substring(0,4))){
+            String sql = command.substring(4);
+            return "\n"+databaseIslemler.SQL_Q_EXEC_Query(sql.trim());
+        }
+        
+        
+        return "GEÇERSİZ İSTEK GİRDİNİZ help KOMUTU İLE YARDIM ALABİLİRSİNİZ";
+    }
+ 
+    
     
     //BUTON ISLEMLERI
     public JButton addButton(String buttonText , ButonPozisyon butonPozisyon , CagrilacakFonksiyon butonFonksiyonu){
@@ -775,9 +858,17 @@ void all_input_comboBoxButton(ArrayList<JComboBox<String>> comboBoxArrayList, St
                 
                 this.mevcutPencere.getPencereGUIComponent_Addr().add(centerPanel, BorderLayout.CENTER);
                 pencereGUI.debugPrint("pencereGUI_Component.addGeneric CENTER | COUNT UPDATE : "+pencereGUI.getCounter());
-
             }
             break;
+           
+            case BOSLUK_TAMAMI:
+                ((Component)object).setPreferredSize(new Dimension(500,500));
+                centerPanel.setLayout(new GridLayout(1, 4));
+                centerPanel.add((Component)object);
+                this.mevcutPencere.getPencereGUIComponent_Addr().add(centerPanel, BorderLayout.CENTER);
+            break;
+            
+           
         }//switch
  }
     

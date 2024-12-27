@@ -1,5 +1,6 @@
 package packDatabase;
 
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,6 +12,8 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.JComboBox;
 
 
@@ -21,12 +24,68 @@ VERITABANINA BAGLANTI BURADA OTOMATIK YAPILIR
 public class DatabaseIslemler {
     databaseBaglanti database;
     
+    //constructor
     public DatabaseIslemler(databaseBaglanti database){
         this.database = database;
     } 
     
     
 //---------------------------------- SORGULAR ----------------------------//
+    public void baglantiyiKes(){
+        database.databaseSonlandir();
+    }
+    
+public String SQL_Q_EXEC_Query(String sql) {
+    Connection bg = database.getBaglanti();
+
+    StringBuilder result = new StringBuilder();
+    
+    try (PreparedStatement pst = bg.prepareStatement(sql);
+         ResultSet rst = pst.executeQuery()) {
+
+        ResultSetMetaData rsmd = (ResultSetMetaData) rst.getMetaData();
+        int columnCount = rsmd.getColumnCount();
+        
+        while (rst.next()) {
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = rsmd.getColumnName(i);
+                String columnValue = rst.getString(i);
+                
+                result.append(columnName).append(": ").append(columnValue).append("\t\t");
+            }
+            result.append("\n");
+        }
+
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        return "HATALI SORGU: " + ex.getMessage();
+    }
+
+    // Sorgu sonuçlarını döndür
+    return result.length() > 0 ? result.toString() : "SONUÇ BULUNAMADI";
+}
+
+
+public List<String> getTab(){
+ 
+        Connection bg = database.getBaglanti();
+        List<String> tableNames = new ArrayList<>();
+        String query = "SHOW TABLES";
+
+        try {
+             Statement stmt = bg.createStatement();
+             ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                tableNames.add(rs.getString(1)+"\n");
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tableNames;
+    }
+
     
     //odunc alinan kitaplar ve alan uyeleri listeleyen sorgu
 public void SQL_Q_oduncKitaplarVeUyeler(){

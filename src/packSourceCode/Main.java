@@ -22,24 +22,13 @@ public class Main {
         
         DatabaseIslemler dbIslemler = new DatabaseIslemler(database);
         
-
-        
         //ANA PENCEREYI BASLATMA
         mainGUI home_frame = new mainGUI(dbIslemler);
         home_frame.manageHomeFrame().setGenislik(950).setYukseklik(650);
         
         home_frame.initMainGUI(true);
-        System.out.println(home_frame.manageHomeFrame().getRetPencereAdi());
-        
-      
-        
-      
-        
-        //dbIslemler.SQL_Q_oduncKitaplarVeUyeler();
-        
-        
-        
-        //database.databaseSonlandir();
+        System.out.println(home_frame.manageHomeFrame().getRetPencereAdi());     
+   
     }
     
 }

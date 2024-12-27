@@ -1,7 +1,10 @@
 package packGuiSwing;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import javax.swing.JButton;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import packDatabase.DatabaseIslemler;
 
 import packGuiSwing.pencereGUI;
@@ -39,11 +42,16 @@ public class mainGUI {
             hf_component.addMenuBar();
             
             ////////////////////
+            JTextArea konsol = hf_component.konsolEkran(ButonPozisyon.BOSLUK_TAMAMI);
+           
             JButton buton1 = hf_component.addButton("Personel Yönetimi",ButonPozisyon.UST,CagrilacakFonksiyon.CF_BUTTON_NW_PERSONEL_YONETIM);
             JButton buton8 = hf_component.addButton("Üye Yönetimi",ButonPozisyon.UST,CagrilacakFonksiyon.CF_BUTTON_NW_UYE_YONETIM);
 
             JButton buton2 = hf_component.addButton("Yazar Yönetimi",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_NW_YAZAR_YONETIM);
             JButton buton9 = hf_component.addButton("Yayınevi Yönetimi",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_NW_YAYINEVI_YONETIM);
+            JTextField messager = hf_component.addTextField("KONSOL_GİRİŞ:", 400, ButonPozisyon.ALT);
+            hf_component.enterListener(messager, konsol);
+            
 
             JButton buton4 = hf_component.addButton("Ödünç Yönetimi",ButonPozisyon.SOL,CagrilacakFonksiyon.CF_BUTTON_NW_ODUNC_YONETIM);
             JButton buton7 = hf_component.addButton("Kitap Yönetimi",ButonPozisyon.SOL,CagrilacakFonksiyon.CF_BUTTON_NW_KITAP_YONETIM);

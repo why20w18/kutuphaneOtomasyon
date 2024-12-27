@@ -99,8 +99,6 @@ public class kitapYonetimGUI {
             JButton button_kitapEkle = ky_component.addButtonParams("Kitap Ekle",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_KITAP_EKLE,girdiler,comboBoxGirdiler);
             ky_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kitapEkle);
             
-            
-            
             JButton button_kitapCikart = ky_component.addButtonParams("Kitap Çıkart", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_KITAP_CIKART,girdiler);
             ky_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kitapCikart);
             
