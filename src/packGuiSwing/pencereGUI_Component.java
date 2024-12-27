@@ -103,6 +103,9 @@ enum CagrilacakFonksiyon{
     //T_ODUNC
     CF_TABLE_ODUNC_LIST,
     
+    //T_UYELER
+    CF_BUTTON_NW_UYE_YONETIM,
+    
     
     
 }
@@ -202,6 +205,10 @@ public class pencereGUI_Component {
                         
                     case CF_BUTTON_NW_KITAP_YAZAR_TABLOSU:
                         CF_Caller.CF_BUTTON_NW_KITAP_YAZAR_TABLOSU_Func();
+                        break;
+                        
+                    case CF_BUTTON_NW_UYE_YONETIM:
+                        CF_Caller.CF_BUTTON_NW_UYE_YONETIM_Func();
                         break;
                         
                                 default:
@@ -1080,6 +1087,12 @@ class butonFonksiyonlari{
         kitapYazarTablosuGUI kitapyazartablosu_frame = new kitapYazarTablosuGUI(databaseIslemler);
         kitapyazartablosu_frame.initkitapYazarTablosuGUI(true);
     }
+    
+    public void CF_BUTTON_NW_UYE_YONETIM_Func(){
+        uyeYonetimiGUI uyeyonetim_frame = new uyeYonetimiGUI(databaseIslemler);
+        uyeyonetim_frame.inituyeYonetimiGUI(true);
+    }
+    
     
     
     public void CF_BUTTON_PERSONEL_EKLE_Func(String personelAd,String personelSoyad , double personelMaas,String personelTuru,String EkBilgi){

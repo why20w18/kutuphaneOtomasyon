@@ -40,7 +40,7 @@ public class mainGUI {
             
             ////////////////////
             JButton buton1 = hf_component.addButton("Personel Yönetimi",ButonPozisyon.UST,CagrilacakFonksiyon.CF_BUTTON_NW_PERSONEL_YONETIM);
-            JButton buton8 = hf_component.addButton("Üye Yönetimi",ButonPozisyon.UST,CagrilacakFonksiyon.CF_BUTTON_KUZEY);
+            JButton buton8 = hf_component.addButton("Üye Yönetimi",ButonPozisyon.UST,CagrilacakFonksiyon.CF_BUTTON_NW_UYE_YONETIM);
 
             JButton buton2 = hf_component.addButton("Yazar Yönetimi",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_NW_YAZAR_YONETIM);
             JButton buton9 = hf_component.addButton("Yayınevi Yönetimi",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_NW_YAYINEVI_YONETIM);
