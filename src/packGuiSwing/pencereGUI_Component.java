@@ -7,11 +7,15 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.color.CMMException;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import packDatabase.DatabaseIslemler;
 import static packGuiSwing.ButonPozisyon.ALT;
@@ -107,8 +111,20 @@ enum CagrilacakFonksiyon{
     //T_UYELER
     CF_BUTTON_NW_UYE_YONETIM,
     
+    //EK_ISLEMLER_NFO OVERLOAD
+    //1.SEKME 
+    CF_1_ISTATISTIKLER_KITAP_YONETIM,
+    
+    //2.SEKME
+    CF_2_ARTTIRIM_AZALTIM_KITAP_YONETIM,
     
     
+    
+    
+    //KITAP YONETIM ISTATISTIKLER LABEL FONKSIYONLARI
+    CF_LABEL_KATEGORI_KITAP_SAYISI,
+    CF_LABEL_KATEGORI_KITAP_SAYFA_SAYISI,
+    CF_KATEGORI_LISTELE_LABEL
 }
 
 public class pencereGUI_Component {
@@ -144,7 +160,7 @@ public class pencereGUI_Component {
         eastPanel = new JPanel();
     
         //PANELLERIN BOYUTLARI
-        westPanel.setPreferredSize(new Dimension(200, 0));
+        westPanel.setPreferredSize(new Dimension(300, 0));
         eastPanel.setPreferredSize(new Dimension(200,0));
         northPanel.setPreferredSize(new Dimension(0,50));
         southPanel.setPreferredSize(new Dimension(0,50));
@@ -157,8 +173,8 @@ public class pencereGUI_Component {
         konsol.setEditable(false);
         konsol.setFont(new Font("Courier New", Font.BOLD, 15));
 
-        konsol.setBackground(Color.BLACK);
-        konsol.setForeground(Color.WHITE);
+        konsol.setBackground(Color.WHITE);
+        konsol.setForeground(Color.BLACK);
         
         JScrollPane scroll = new JScrollPane(konsol);
         komponentPozisyonlandiricisi(scroll, pozisyon);
@@ -168,14 +184,14 @@ public class pencereGUI_Component {
         return konsol;
     }
     
-    public void enterListener(JTextField cmdInput , JTextArea konsol){
+ public void enterListener(JTextField cmdInput , JTextArea konsol , konsolCommand cmd){
         cmdInput.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String inputText = cmdInput.getText();
                 if (!inputText.isEmpty()){
                     konsol.append("KULLANICI_ISTEK >> " + inputText + "\n");
-                    konsol.append("\n[VERİTABANI]:" + komutIslem(inputText,konsol,15) + "\n\n");
+                    konsol.append("\n[VERİTABANI]:" + cmd.komutIslem(inputText,konsol,15) + "\n\n");
                     cmdInput.setText("");
                     konsol.setCaretPosition(konsol.getDocument().getLength());
                 }
@@ -183,52 +199,7 @@ public class pencereGUI_Component {
         });
     }
     
-    public String komutIslem(String command,JTextArea konsol,int varsayilanPunto){
-        
-        
-        if ("help".equalsIgnoreCase(command)){
-            return "\n-----KOMUTLAR-----\n"+
-                   "KOMUT_1 -> sql:SQL_QUERY :: DML KOMUTLARINI DOĞRUDAN KONSOLDAN ÇALIŞTIRABİLİRSİNİZ\n"+
-                   "KOMUT_2 -> tab :: VERİTABANINDAKİ TABLO ADLARINI ÇEVİRİR\n"+
-                   "KOMUT_3 -> col TABLO_ADI :: MEVCUT TABLONUN NİTELİKLERİNİ ÇEVİRİR\n";
-                    
-        }
-       
-        else if ("exit".equalsIgnoreCase(command)){
-            databaseIslemler.baglantiyiKes();
-            System.exit(0);
-        }
-        
-        else if("cls".equalsIgnoreCase(command)){
-            konsol.setText("");
-            return "KONSOL TEMİZLENDİ";
-        }
-        else if("+".equals(command)){
-          konsol.setFont(new Font("Courier New", Font.BOLD, varsayilanPunto + 5));
-          return "+ PUNTO="+varsayilanPunto;
-        }
-        else if("-".equals(command)){
-            konsol.setFont(new Font("Courier New", Font.BOLD, varsayilanPunto - 5));
-            return "- PUNTO="+varsayilanPunto;
-        }
-        
-        else if("tab".equalsIgnoreCase(command)){
-            return "\n"+databaseIslemler.getTab().toString();
-        }
-        
-        else if("col".equalsIgnoreCase(command.substring(0,3))){
-            String tabloAdi = command.substring(3).trim();
-            return "\n"+databaseIslemler.SQL_Q_EXEC_Query("DESCRIBE "+tabloAdi);
-        }
-        
-        else if("sql:".equalsIgnoreCase(command.substring(0,4))){
-            String sql = command.substring(4);
-            return "\n"+databaseIslemler.SQL_Q_EXEC_Query(sql.trim());
-        }
-        
-        
-        return "GEÇERSİZ İSTEK GİRDİNİZ help KOMUTU İLE YARDIM ALABİLİRSİNİZ";
-    }
+
  
     
     
@@ -239,9 +210,11 @@ public class pencereGUI_Component {
         
        JButton button = new JButton(buttonText);
        button.setMinimumSize(new Dimension(100, 50));
-       komponentPozisyonlandiricisi(button, butonPozisyon); 
+       komponentPozisyonlandiricisi(button, butonPozisyon);
+       //Border border = new LineBorder(Color.BLACK, 2);
+       //button.setBorder(border);
 
-        
+       
         
 
        butonFonksiyonlari CF_Caller = new butonFonksiyonlari(button, mevcutPencere,databaseIslemler);
@@ -629,6 +602,57 @@ public void CF_BUTTON_KITAP_EKLE_Func(
 
         return button;
     }
+       
+       
+        public JButton addButtonParams(String buttonText , ButonPozisyon butonPozisyon , CagrilacakFonksiyon butonFonksiyonu,int girdilerInt[],JLabel degisecekLabel[]){
+       JButton button = new JButton(buttonText);
+       button.setMinimumSize(new Dimension(100, 50));
+       komponentPozisyonlandiricisi(button, butonPozisyon); 
+
+
+
+       butonFonksiyonlari CF_Caller = new butonFonksiyonlari(button, mevcutPencere,databaseIslemler);
+       
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean paramControl = true;
+                switch(butonFonksiyonu){
+                    case CF_TANIMLANMADI:
+                        CF_Caller.CF_TANIMLANMADI_Func();
+                        break;
+                        
+                    case CF_KATEGORI_LISTELE_LABEL:
+                        degisecekLabel[0].setText("Kategori Kitap Sayısı: "+databaseIslemler.SQL_Q_DBF_getKitapSayisi_pKategoriID(girdilerInt[0]));
+                        degisecekLabel[1].setText("Kategori Sayfa Sayısı: "+databaseIslemler.SQL_Q_DBF_getToplamSayfaSayisi_pKategoriID(girdilerInt[0]));
+                        degisecekLabel[2].setText("Yayınevi Kitap Sayısı: "+databaseIslemler.SQL_Q_DBF_getYayineviKitapSayisi(girdilerInt[1]));
+                        degisecekLabel[3].setText("Yayınevi Sayfa Sayısı: "+databaseIslemler.SQL_Q_DBF_getYayineviKitapSayfaSayisi(girdilerInt[1]));
+                        break;
+                        
+                    //case CF_KATEGORI_YAYINEVI_LISTELE_LABEL: //yayinevi ve kategoriye gore filtreleme
+                        
+                        
+                      //  break;
+                 
+                        
+                  
+            
+                                              
+                        
+                        default:
+            System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | addButtonParams | pencereGUI_Component");
+            break;
+            
+            
+                }
+            }
+        });
+        
+  
+
+        return button;
+    }
     
     
     public JTextField addTextField(String baslangicText , int maxKapasite , int yaziPunto , Color arkaplanRenk, ButonPozisyon textFieldPozisyon){
@@ -999,7 +1023,113 @@ public void infoBar(String eklemeMSG , String cikartmaMSG , String guncellemeMSG
  }
 
 
-//
+
+
+////////////////////////////////////////////////////////////////////////////////
+//ekSekmeFunc1 CF_1... ile baslayanlar
+//ekSekmeFunc2 CF_2... ile baslayanlar
+public void infoBar(String eklemeMSG , String cikartmaMSG , String guncellemeMSG,
+        String ekSekme1 , String ekSekme2,
+       CagrilacakFonksiyon ekSekme1Func , CagrilacakFonksiyon ekSekme2Func
+        ){
+     
+    //menu cubugu
+    JMenuBar menuBar = new JMenuBar();
+    
+    //menu sekmeleri
+    JMenu nfoHelp = new JMenu("Yardım");
+     
+    JMenuItem eklemeYardim = new JMenuItem("Ekleme Yardım");    
+    JMenuItem cikartmaYardim = new JMenuItem("Çıkartma Yardım");
+    JMenuItem guncellemeYardim = new JMenuItem("Güncelleme Yardım");
+    
+    JMenuItem ekSekmeITEM_1 = new JMenuItem(ekSekme1);
+    JMenuItem ekSekmeITEM_2 = new JMenuItem(ekSekme2);
+
+    
+    nfoHelp.add(eklemeYardim);
+    nfoHelp.add(cikartmaYardim);
+    nfoHelp.add(guncellemeYardim);
+    
+    nfoHelp.add(ekSekmeITEM_1);
+    nfoHelp.add(ekSekmeITEM_2);
+    
+    menuBar.add(nfoHelp);
+    
+    mevcutPencere.getPencereGUIComponent_Addr().setJMenuBar(menuBar);
+    
+    eklemeYardim.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+                            JOptionPane.showMessageDialog(mevcutPencere.getPencereGUIComponent_Addr(),eklemeMSG);
+          }
+    });
+    
+    
+      cikartmaYardim.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              System.out.println(cikartmaMSG);
+              JOptionPane.showMessageDialog(mevcutPencere.getPencereGUIComponent_Addr(),cikartmaMSG);
+
+           }
+    });
+      
+      
+      
+        guncellemeYardim.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+                            JOptionPane.showMessageDialog(mevcutPencere.getPencereGUIComponent_Addr(),guncellemeMSG);
+           }
+    });
+        
+        
+        //1-ISTATISTIKLER
+         ekSekmeITEM_1.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              System.out.println(ekSekme1);
+              
+              switch(ekSekme1Func){
+                  case CF_1_ISTATISTIKLER_KITAP_YONETIM:
+                      NW_NFOBAR_ISTATISTIKLER_KITAP_YONETIM_PVFunc();
+                      break;
+              }
+              
+           }
+    });
+         
+         
+         //2-kitapYonetimGUI_arttirimAzaltim
+          ekSekmeITEM_2.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              System.out.println(ekSekme2);
+                switch(ekSekme2Func){
+                    case CF_2_ARTTIRIM_AZALTIM_KITAP_YONETIM:
+                        NW_NFOBAR_ARTTIRIM_AZALTIM_PVFunc();
+                        break;
+                }              
+              
+           }
+    });
+          
+          
+ }
+
+public void NW_NFOBAR_ARTTIRIM_AZALTIM_PVFunc(){
+    kitapYonetimGUI_ArttirimAzaltim kyg_aa_frame = new kitapYonetimGUI_ArttirimAzaltim(databaseIslemler);
+    kyg_aa_frame.initkitapYonetimGUI_ArttirimAzaltim(true);
+}
+
+public void NW_NFOBAR_ISTATISTIKLER_KITAP_YONETIM_PVFunc(){
+   kitapYonetimIstatistikler kyg_Istatistikler_frame = new kitapYonetimIstatistikler(databaseIslemler);
+   kyg_Istatistikler_frame.initkitapYonetimIstatistikler(true);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -1007,6 +1137,7 @@ public JTable addTable(String kolonAdlari[],int satirYukseklik,int yaziPunto,Cag
     DefaultTableModel tableModel = new DefaultTableModel(kolonAdlari,0);
     tableFonksiyonlari CF_Caller = new tableFonksiyonlari(tableModel, mevcutPencere);
     
+            
     
     //SADECE TABLE OLACAK SEKILDE IMPLEMENTE EDILMIS FONKSIYONLAR
     switch(cagrilacakSorguFonksiyon){
@@ -1044,7 +1175,6 @@ public JTable addTable(String kolonAdlari[],int satirYukseklik,int yaziPunto,Cag
      JTable table = new JTable(tableModel);
      JScrollPane scrollPane = new JScrollPane(table);
      
-     
      table.setRowHeight(satirYukseklik); 
      table.setFont(new Font("Arial", Font.PLAIN, yaziPunto));
 
@@ -1054,33 +1184,24 @@ public JTable addTable(String kolonAdlari[],int satirYukseklik,int yaziPunto,Cag
     return table;
 }
 
+public JLabel addLabel(String metin,int punto,ButonPozisyon pozisyon){
+    JLabel label = new JLabel(metin);
+    label.setPreferredSize(new Dimension(300,100));
+    komponentPozisyonlandiricisi(label, pozisyon);
+    
+    
+    label.setFont(new Font("Arial", Font.BOLD, punto));
+    
+    return label;
+}
+
 
 } //pencereGUI_Component SON
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 ////////////////////COMPONENT FONKSIYONLARI ICIN AYRI CLASSLAR//////////////////
-
-
-
-
-
-
-
-
 
 
 
@@ -1215,7 +1336,12 @@ class butonFonksiyonlari{
     }
     
     public void CF_BUTTON_YAZAR_CIKART_Func(int yazarID){
-        databaseIslemler.SQL_Q_YazarCikart(yazarID);
+        if(databaseIslemler.SQL_Q_YazarCikart(yazarID) == -1){
+            messageBoxOK("BU YAZARIN KİTAPLARI VARDIR SİLEMEZSİNİZ !\nİLK ÖNCE KİTAPLARI SİLİN");
+        }
+        else 
+            messageBoxOK("YAZAR BAŞARIYLA SİLİNDİ !");
+    
     }
     
     public void CF_BUTTON_YAZAR_GUNCELLE_Func(int yazarID , String yazarAd , String yazarSoyad , String yazarUlke){

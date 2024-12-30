@@ -1,6 +1,7 @@
 package packDatabase;
 
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
+import com.mysql.cj.protocol.Resultset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -941,17 +942,23 @@ public void SQL_Q_YazarEkle(String yazarAd , String yazarSoyad , String yazarUlk
     }
 }
 
-public void SQL_Q_YazarCikart(int yazarID) {
+public int SQL_Q_YazarCikart(int yazarID) {
     Connection bg = database.getBaglanti();
-
+    if(SQL_Q_yazarKitabaSahipMi(yazarID)){
+        System.out.println("YAZAR KITABA SAHIPTIR BU YAZARI SILEMEZSINIZ !");
+        return -1;
+    }
+    
+    /*
+        1-yazarin kitaplari varsa silmeye izin verme 
+        2-ilk once kitaplari kaldirilmasi gerektigini belirt
+    */
     String sqlDeleteFromKitapYazarJT = "DELETE FROM T_KITAP_YAZAR_JT WHERE yazarID = ?";
     String sqlDeleteFromYazarYayineviJT = "DELETE FROM T_YAZAR_YAYINEVI_JT WHERE yazarID = ?";
     String sqlDeleteFromYazar = "DELETE FROM T_YAZAR WHERE yazarID = ?";
 
+    
     try {
-        
-        bg.setAutoCommit(false);
-
         PreparedStatement pstKitapYazarJT = bg.prepareStatement(sqlDeleteFromKitapYazarJT);
         pstKitapYazarJT.setInt(1, yazarID);
         pstKitapYazarJT.executeUpdate();
@@ -970,7 +977,6 @@ public void SQL_Q_YazarCikart(int yazarID) {
         else {
             System.out.println("Silme işlemi başarısız! Yazar bulunamadı.");
         }
-        bg.commit();
 
     } catch (SQLException ex) {
         try {
@@ -987,6 +993,34 @@ public void SQL_Q_YazarCikart(int yazarID) {
             ex.printStackTrace();
         }
     }
+    
+    return 1;
+}
+
+public boolean SQL_Q_yazarKitabaSahipMi(int yazarID){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT COUNT(*) FROM T_KITAP_YAZAR_JT WHERE yazarID = ?;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setInt(1, yazarID);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int count = rst.getInt(1);
+        
+            if(count > 0){ //count > 0 ise yazar kitaba sahiptir
+                return true;
+            }
+        }
+         
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    
+    return false;
 }
 
 
@@ -1197,4 +1231,418 @@ public void SQL_Q_YayineviGuncelle(int yayineviID , String yayineviAd , String y
     
     
     }
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////DBF FONKSIYONLARINI CAGIRMA
+public int SQL_Q_DBF_getKitapSayisi_pKategoriID(int kategoriID){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_getKitapSayisi_pKategoriID(?) AS kategoriyeGoreKitapSayisi;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setInt(1, kategoriID);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int kitapSayisi = rst.getInt("kategoriyeGoreKitapSayisi");
+            return kitapSayisi;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return -1;
+}
+
+public int SQL_Q_DBF_getKitapSayisi(){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_getKitapSayisi() AS kitapSayisi;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int kitapSayisi = rst.getInt("kitapSayisi");
+            return kitapSayisi;
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    return -1;
+}
+
+public int SQL_Q_DBF_getToplamSayfaSayisi(){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_getToplamSayfaSayisi() AS sayfaSayisi;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int kitapSayisi = rst.getInt("sayfaSayisi");
+            return kitapSayisi;
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    return -1;
+}
+
+
+public int SQL_Q_DBF_getToplamSayfaSayisi_pKategoriID(int kategoriID){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_getToplamSayfaSayisi_pKategoriID(?) AS sayfaSayisi;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setInt(1, kategoriID);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int kitapSayisi = rst.getInt("sayfaSayisi");
+            return kitapSayisi;
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    return -1;
+}
+
+public int SQL_Q_DBF_getYayineviSayisi(){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_getYayineviSayisi() AS yayineviSayisi;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int yayineviSayisi = rst.getInt("yayineviSayisi");
+            return yayineviSayisi;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return -1;
+}
+
+public int SQL_Q_DBF_getToplamYazarSayisi(){
+      Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_getToplamYazarSayisi() AS yazarSayisi;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int yazarSayisi = rst.getInt("yazarSayisi");
+            return yazarSayisi;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return -1;
+}
+
+public int SQL_Q_DBF_getKategoriSayisi(){
+     Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_getKategoriSayisi() AS kategoriSayisi;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int kategoriSayisi = rst.getInt("kategoriSayisi");
+            return kategoriSayisi;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return -1;
+}
+
+
+public int SQL_Q_DBF_getYayineviKitapSayisi(int yayineviID){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_getYayineviKitapSayisi(?) AS yayineviKitapSayisi;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setInt(1, yayineviID);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int kitapSayisi = rst.getInt("yayineviKitapSayisi");
+            return kitapSayisi;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    
+    return -1;
+}
+
+
+public int SQL_Q_DBF_getYayineviKitapSayfaSayisi(int yayineviID){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_getYayineviKitapSayfaSayisi(?) AS yayineviKitapSayfaSayisi;";
+    
+    try{
+        PreparedStatement ps = bg.prepareStatement(sql);
+        ps.setInt(1, yayineviID);
+        ResultSet rst = ps.executeQuery();
+        if(rst.next()){
+            int kitapSayfaSayisi = rst.getInt("yayineviKitapSayfaSayisi");
+            return kitapSayfaSayisi;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return -1;
+} 
+
+public int SQL_Q_DBF_maxKitapSayfa(){
+      Connection bg = database.getBaglanti();
+    String sql = "SELECT maxKitapSayfa() AS maxSayfa;";
+    
+    try{
+        PreparedStatement ps = bg.prepareStatement(sql);
+        ResultSet rst = ps.executeQuery();
+        if(rst.next()){
+            int maxSayfa = rst.getInt("maxSayfa");
+            return maxSayfa;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return -1;
+}
+
+public String SQL_Q_DBF_enUzunKitapAdi(){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT kitapAd FROM T_KITAP WHERE kitapSayfaSayisi = ?;";
+    String enUzunAd = "BULUNAMADI !";
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setInt(1, SQL_Q_DBF_maxKitapSayfa());
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            enUzunAd = rst.getString("kitapAd");
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return enUzunAd;
+}
+
+public int SQL_Q_DBF_minKitapSayfa(){
+      Connection bg = database.getBaglanti();
+    String sql = "SELECT minKitapSayfa() AS minSayfa;";
+    
+    try{
+        PreparedStatement ps = bg.prepareStatement(sql);
+        ResultSet rst = ps.executeQuery();
+        if(rst.next()){
+            int minSayfa = rst.getInt("minSayfa");
+            return minSayfa;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return -1;
+}
+
+
+public String SQL_Q_DBF_enKisaKitapAd(){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT enKisaKitapAdi() AS enKisaKitap;";
+    String enKisaKitap = "BULUNAMADI !";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            enKisaKitap = rst.getString("enKisaKitap");
+            return enKisaKitap;
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return enKisaKitap;
+}
+
+public double SQL_Q_DBF_ortalamaSayfaSayisi(){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_ortalamaSayfaSayisi() AS ortSayfa;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            double ortalamaSayfaSayisi = rst.getDouble("ortSayfa");
+            return ortalamaSayfaSayisi;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return 0.0;
+}
+
+public String SQL_Q_DBF_enPahaliKitapAdi(){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_enPahaliKitapAd() AS enPahaliAd;";
+    String enPahaliAd = "BULUNAMADI !";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+           enPahaliAd = rst.getString("enPahaliAd");
+           return enPahaliAd;
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+   return enPahaliAd;
+}
+
+public double SQL_Q_DBF_enPahaliKitapFiyat(){
+     Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_enPahaliKitapFiyat() AS enPahaliFiyat;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+           double enPahaliFiyat = rst.getDouble("enPahaliFiyat");
+           return enPahaliFiyat;
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return 0.0;
+}
+
+public String SQL_Q_DBF_enUcuzKitapAd(){
+     Connection bg = database.getBaglanti();
+    String sql = "SELECT enUcuzKitapAd() AS enUcuzAd;";
+    String enUcuzAd = "BULUNAMADI !";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+           enUcuzAd = rst.getString("enUcuzAd");
+           return enUcuzAd;
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+   return enUcuzAd;
+}
+
+//DBF_enUcuzKitapFiyat
+public double SQL_Q_DBF_enUcuzFiyat(){
+      Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_enUcuzKitapFiyat() AS enUcuzFiyat;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+           double enUcuzFiyat = rst.getDouble("enUcuzFiyat");
+           return enUcuzFiyat;
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return 0.0;
+}
+
+
+public int SQL_Q_DBF_farkliUlkeYazarSayisi(){
+    //DBF_farkliUlkedenYazarSayisi
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT DBF_farkliUlkedenYazarSayisi() AS farkliYazarSay;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int farkliUlkeler = rst.getInt("farkliYazarSay");
+            return farkliUlkeler;
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+
+    return 0;
+}
+        
+        
+        
+
+
+
 }//class DatabaseIslemler SON

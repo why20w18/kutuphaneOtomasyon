@@ -4,23 +4,33 @@ USE kutuphaneOtomasyon3;
 
 CREATE TABLE T_KATEGORI(
 	kategoriID INT AUTO_INCREMENT PRIMARY KEY,
-    kategoriAd VARCHAR(40) 
+    kategoriAd VARCHAR(40)
 );
 
 CREATE TABLE T_YAYINEVI(
 	yayineviID INT AUTO_INCREMENT PRIMARY KEY,
     yayineviAd VARCHAR(40),
-    yayineviUlke VARCHAR(20)    
+    yayineviUlke VARCHAR(20)
 );
 
--- YAZAR ILE YAYINEVI N:N BAGLANTILI JOINT TABLE YAPACAGIZ VE 
+-- YAZAR ILE YAYINEVI N:N BAGLANTILI JOINT TABLE YAPACAGIZ VE
 -- T_KITAPTA T_YAYINEVI ILE ILISKILI BU SEBEPLE O TABLO OLUSTURULMADAN BAGLANTIYI KURMAMIZ GEREKIYOR
-CREATE TABLE T_YAZAR( 
+CREATE TABLE T_YAZAR(
 	yazarID INT AUTO_INCREMENT PRIMARY KEY,
     yazarUlke VARCHAR(15),
     yazarAd VARCHAR(20),
     yazarSoyad VARCHAR(20)
 );
+
+ALTER TABLE T_YAZAR
+MODIFY COLUMN yazarUlke VARCHAR(45);
+
+ALTER TABLE T_YAZAR
+MODIFY COLUMN yazarAd VARCHAR(45);
+
+ALTER TABLE T_YAZAR
+MODIFY COLUMN yazarSoyad VARCHAR(45);
+
 -- YAZAR VE YAYINEVI PRIMARY KEYINI ALACAGIZ
 CREATE TABLE T_YAZAR_YAYINEVI_JT( -- BU TABLO UZERINDEN N:N ILISKIYI YAZAR<-1:N->JT<-N:1->YAYINEVI SEKLINDE IMPLEMENTE ETTIK
 	yazarID INT,
@@ -40,17 +50,20 @@ CREATE TABLE T_KITAP(
     kitapFiyat DECIMAL(6,2),
     kitapISBN CHAR(13),
     kitapSayfaSayisi INT,
-    
+
     kategoriID INT,
 	yayineviID INT,
 
-    
+
     FOREIGN KEY (kategoriID) REFERENCES T_KATEGORI(kategoriID), -- 1 KATEGORI N KITAP BAGLANTISI
     FOREIGN KEY (yayineviID) REFERENCES T_YAYINEVI(yayineviID)  -- 1 YAYINEVI N KITAP BAGLANTISI
 );
 
 ALTER TABLE T_KITAP
 MODIFY kitapISBN CHAR(20);
+
+ALTER TABLE T_KITAP
+MODIFY kitapAd VARCHAR(50);
 
 CREATE TABLE T_KITAP_YAZAR_JT (
     kitapID INT,
@@ -71,7 +84,7 @@ CREATE TABLE T_UYELER(
     uyeKayitTarih DATETIME,
     uyeIndirimMiktari DECIMAL(3,1),
     uyeTCNO char(11) UNIQUE,				-- ---------------------------------------------YENI EKLENDI
-    
+
     uyeTuru ENUM('OGRENCI','SIVIL','OZELSEKTOR')
     -- YAS BURADAN PROSEDURLE TURETILEBILIR
 );
@@ -80,17 +93,17 @@ CREATE TABLE T_OGRENCI( -- T_UYELER TABLOSUNDAN OVERLAP
 	ogrenciID INT AUTO_INCREMENT PRIMARY KEY,
     ogrenciOkulAd VARCHAR(50),
     ogrenciTuru ENUM('LISANS','LISANSUSTU','ORTAOGRETIM'),
-    
-    uyeID INT, 
+
+    uyeID INT,
     FOREIGN KEY (uyeID) REFERENCES T_UYELER(uyeID) -- 1 T_UYE <-> N T_OGRENCI
 );
 -- T_OGRENCI TABLOSUNDAN DISJOINT YAPILMISTIR
 CREATE TABLE T_LISANS(
 	lisansID INT AUTO_INCREMENT PRIMARY KEY,
     lisansBolum VARCHAR(25),
-    lisansAGNO DECIMAL(3,2), 
+    lisansAGNO DECIMAL(3,2),
     CHECK(lisansAGNO <= 4.0),
-    
+
     ogrenciID INT UNIQUE,
     FOREIGN KEY (ogrenciID) REFERENCES T_OGRENCI(ogrenciID)
 );
@@ -98,12 +111,12 @@ CREATE TABLE T_LISANS(
 -- T_OGRENCI TABLOSUNDAN DISJOINT YAPILMISTIR
 CREATE TABLE T_ORTAOGRETIM(
 	ortaogretimID INT AUTO_INCREMENT PRIMARY KEY,
-	ortaogretimSinif INT, 
-    ortaogretimOrtalama INT, 
+	ortaogretimSinif INT,
+    ortaogretimOrtalama INT,
     ortaOgretimTuru ENUM('ILKOKUL','ORTAOKUL','LISE'),
-    
+
     ogrenciID INT UNIQUE,
-    FOREIGN KEY (ogrenciID) REFERENCES T_OGRENCI(ogrenciID)   
+    FOREIGN KEY (ogrenciID) REFERENCES T_OGRENCI(ogrenciID)
 );
 
 -- T_OGRENCI TABLOSUNDAN DISJOINT YAPILMISTIR
@@ -112,7 +125,7 @@ CREATE TABLE T_LISANSUSTU(
 	lisansBolum VARCHAR(25),
     lisansUstuAGNO DECIMAL(3,2), -- AGNOYA KISITLMA KOYULMALI 4.00 UZERINE GECEMEMELIDIR
     CHECK (lisansUstuAGNO <= 4.00),
-   
+
     ogrenciID INT UNIQUE,
 	FOREIGN KEY (ogrenciID) REFERENCES T_OGRENCI(ogrenciID)
 );
@@ -120,7 +133,7 @@ CREATE TABLE T_LISANSUSTU(
 CREATE TABLE T_SIVIL( -- T_UYELER TABLOSUNDAN OVERLAP				-- --------EMEKLI OLARAK DEGISTIRILEBILIRS
 	sivilID INT AUTO_INCREMENT PRIMARY KEY,
     sivilGelirMiktar DECIMAL(6,2),
-    
+
     uyeID INT,
 	FOREIGN KEY (uyeID) REFERENCES T_UYELER(uyeID) -- 1 T_UYE <-> N T_SIVIL
 );
@@ -138,13 +151,13 @@ CREATE TABLE T_ODUNC(
 	oduncID INT AUTO_INCREMENT PRIMARY KEY,
     oduncAlmaTarih DATETIME,
     iadeEtmeTarih DATETIME,
-    
-    -- 
+
+    --
     kitapID INT , -- ZAYIF VARLIK OLDUGUNDAN ICINDE BAGIMLI OLDUGUNUN PK'SINI EKLEDIK
     uyeID INT,
-    
+
     FOREIGN KEY (kitapID) REFERENCES T_KITAP(kitapID),
-    FOREIGN KEY (uyeID) REFERENCES T_UYELER(uyeID) 
+    FOREIGN KEY (uyeID) REFERENCES T_UYELER(uyeID)
 );
 
 -- PERSONELIN KITAPLA MANTIKSAL BIR BAGLANTISI YOK
@@ -159,31 +172,304 @@ CREATE TABLE T_PERSONEL(
 CREATE TABLE T_HIZMETLI(
 	hizmetliID INT AUTO_INCREMENT PRIMARY KEY,
     hizmetliGorev VARCHAR(1000),
-	
-    personelID INT UNIQUE, 
-    FOREIGN KEY (personelID) REFERENCES T_PERSONEL(personelID) 
+
+    personelID INT UNIQUE,
+    FOREIGN KEY (personelID) REFERENCES T_PERSONEL(personelID)
 );
 
 CREATE TABLE T_YONETICI(
 	yoneticiID INT AUTO_INCREMENT PRIMARY KEY,
     yoneticiBirim VARCHAR(50),
 
-    personelID INT UNIQUE, 
-    FOREIGN KEY (personelID) REFERENCES T_PERSONEL(personelID) 
+    personelID INT UNIQUE,
+    FOREIGN KEY (personelID) REFERENCES T_PERSONEL(personelID)
 );
 
-SELECT TK.kitapID, 
-       TK.kitapAd, 
-       TK.kitapStok, 
-       TK.kitapISBN, 
-       TKategori.kategoriAd, 
-       TK.kitapSayfaSayisi, 
-       TK.kitapFiyat, 
-       TYayin.yayineviAd, 
-       TYazar.yazarAd, 
+SELECT TK.kitapID,
+       TK.kitapAd,
+       TK.kitapStok,
+       TK.kitapISBN,
+       TKategori.kategoriAd,
+       TK.kitapSayfaSayisi,
+       TK.kitapFiyat,
+       TYayin.yayineviAd,
+       TYazar.yazarAd,
        TYazar.yazarSoyad
 FROM T_KITAP TK
 JOIN T_KATEGORI TKategori ON TK.kategoriID = TKategori.kategoriID
 JOIN T_YAYINEVI TYayin ON TK.yayineviID = TYayin.yayineviID
 JOIN T_KITAP_YAZAR_JT TKYazarJT ON TK.kitapID = TKYazarJT.kitapID
 JOIN T_YAZAR TYazar ON TKYazarJT.yazarID = TYazar.yazarID;
+
+
+-- FONKSIYONLAR: KITAP YONETIM ISTATISTIKLER KISMI ICIN
+USE kutuphaneOtomasyon3;
+
+DELIMITER $$
+CREATE FUNCTION DBF_getKitapSayisi_pKategoriID(ktgID INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE ks INT DEFAULT -1;
+    SELECT COUNT(*) INTO ks
+    FROM T_KITAP
+    WHERE kategoriID = ktgID;
+    RETURN ks;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION DBF_getKitapSayisi() RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE ks INT DEFAULT -1;
+    SELECT COUNT(*) INTO ks
+    FROM T_KITAP;
+    RETURN ks;
+END $$
+DELIMITER ;
+
+DROP FUNCTION DBF_getKitapSayisi_pKategoriID;
+DROP FUNCTION DBF_getKitapSayisi;
+
+DELIMITER $$
+CREATE FUNCTION DBF_getToplamSayfaSayisi()
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE sayfaSayisi INT DEFAULT -1;
+	SELECT SUM(kitapSayfaSayisi) INTO sayfaSayisi
+    FROM T_KITAP;
+    RETURN sayfaSayisi;
+END $$
+DELIMITER ;
+
+DROP FUNCTION DBF_getToplamSayfaSayisi;
+
+DELIMITER $$
+CREATE FUNCTION DBF_getToplamSayfaSayisi_pKategoriID(ktgID INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE sayfaSayisi INT;
+    SELECT SUM(kitapSayfaSayisi) INTO sayfaSayisi
+    FROM T_KITAP
+    WHERE kategoriID = ktgID;
+
+	RETURN sayfaSayisi;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE FUNCTION DBF_getYayineviSayisi()
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE yayineviSayisi INT DEFAULT 0;
+
+    SELECT COUNT(*) INTO yayineviSayisi
+    FROM T_YAYINEVI;
+
+	RETURN yayineviSayisi;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION DBF_getToplamYazarSayisi()
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE yazarSayisi INT DEFAULT 0;
+    SELECT COUNT(*) INTO yazarSayisi
+    FROM T_YAZAR;
+
+    RETURN yazarSayisi;
+END $$
+DELIMITER ;
+
+DELIMITER //
+CREATE FUNCTION DBF_getKategoriSayisi()
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE kategoriSayisi INT DEFAULT 0;
+	SELECT COUNT(*) INTO kategoriSayisi
+    FROM T_KATEGORI;
+
+    RETURN kategoriSayisi;
+END //
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION DBF_getYayineviKitapSayisi(yayinID INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE yeKitapSayisi INT DEFAULT 0;
+
+    SELECT COUNT(*) INTO yeKitapSayisi
+    FROM T_KITAP
+    WHERE yayineviID = yayinID;
+
+    RETURN yeKitapSayisi;
+END $$
+DELIMITER ;
+SHOW WARNINGS;
+
+DELIMITER $$
+CREATE FUNCTION DBF_getYayineviKitapSayfaSayisi(yayinID INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE ye_kitapSayfaSayisi INT;
+
+    SELECT SUM(kitapSayfaSayisi) INTO ye_kitapSayfaSayisi
+    FROM T_KITAP
+    WHERE yayineviID = yayinID;
+
+    RETURN ye_kitapSayfaSayisi;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION maxKitapSayfa()
+RETURNS INT
+BEGIN
+	DECLARE maxSayfa INT DEFAULT 0;
+    SELECT MAX(kitapSayfaSayisi) INTO maxSayfa
+    FROM T_KITAP;
+
+    RETURN maxSayfa;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION minKitapSayfa()
+RETURNS INT
+BEGIN
+	DECLARE minSayfa INT DEFAULT 0;
+    SELECT MIN(kitapSayfaSayisi) INTO minSayfa
+    FROM T_KITAP;
+
+    RETURN minSayfa;
+END $$
+DELIMITER ;
+SHOW WARNINGS;
+
+DELIMITER $$
+CREATE FUNCTION enKisaKitapAdi()
+RETURNS VARCHAR(50)
+DETERMINISTIC
+BEGIN
+	DECLARE enKisaKitapAd VARCHAR(50);
+
+	SELECT kitapAd INTO enKisaKitapAd
+    FROM T_KITAP
+    ORDER BY kitapSayfaSayisi ASC
+    LIMIT 1;
+
+    RETURN enKisaKitapAd;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE FUNCTION DBF_ortalamaSayfaSayisi()
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+	DECLARE ortSayfa DECIMAL(10,2) DEFAULT 0;
+	SELECT AVG(kitapSayfaSayisi) INTO ortSayfa
+    FROM T_KITAP;
+
+    RETURN ortSayfa;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION DBF_enPahaliKitapAd()
+RETURNS VARCHAR(50)
+DETERMINISTIC
+BEGIN
+	DECLARE enPahaliAd VARCHAR(50);
+
+	SELECT kitapAd INTO enPahaliAd
+    FROM T_KITAP
+    ORDER BY kitapFiyat DESC
+    LIMIT 1;
+
+	RETURN enPahaliAd;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE FUNCTION DBF_enPahaliKitapFiyat()
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+	DECLARE enPahaliFiyat DECIMAL(10,2);
+	SELECT kitapFiyat INTO enPahaliFiyat
+    FROM T_KITAP
+    ORDER BY kitapFiyat DESC
+    LIMIT 1;
+
+    RETURN enPahaliFiyat;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION enUcuzKitapAd()
+RETURNS VARCHAR(50)
+DETERMINISTIC
+BEGIN
+	DECLARE enUcuzAd VARCHAR(50);
+
+	SELECT kitapAd INTO enUcuzAd
+    FROM T_KITAP
+    ORDER BY kitapFiyat ASC
+    LIMIT 1;
+
+	RETURN enUcuzAd;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION DBF_enUcuzKitapFiyat()
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+	DECLARE enUcuzFiyat DECIMAL(10,2);
+	SELECT kitapFiyat INTO enUcuzFiyat
+    FROM T_KITAP
+    ORDER BY kitapFiyat ASC
+    LIMIT 1;
+
+    RETURN enUcuzFiyat;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION DBF_farkliUlkedenYazarSayisi()
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE farkliUlkeYazarlari INT DEFAULT 0;
+	SELECT COUNT(DISTINCT yazarUlke) INTO farkliUlkeYazarlari
+    FROM T_YAZAR;
+
+    RETURN farkliUlkeYazarlari;
+END $$
+DELIMITER ;
+
+-- PROSEDURLER:
+DELIMITER $$
+CREATE PROCEDURE getYazarTamad(IN yazarID INT,OUT yazarTamad VARCHAR(80))
+BEGIN
+
+
+END $$
+DELIMITER ;
+
+

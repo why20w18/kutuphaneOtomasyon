@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import packDatabase.DatabaseIslemler;
 
 import packGuiSwing.pencereGUI;
@@ -44,15 +45,33 @@ public class kitapYonetimGUI {
             ky_component.infoBar(
                     "KITAP YONETIM : Kitap Adı , ISBN , Kategori , Sayfa Sayısı , Yayınevi , Yazar Adı , Yazar Soyadı EKSİKSİZ GİRİLEREK EKLEME YAPILIR",
                     "KITAP YONETIM : kitapID GIRILEREK ISTENEN KITAP SILINEBILIR", 
-                    "KITAP YONETIM : kitapID Kitap Adı , ISBN , Kategori , Sayfa Sayısı , Yayınevi GÜNCELLENEBİLİR | Yazar Adı VE Yazar Soyadı GÜNCELLENEMEZ");
+                    "KITAP YONETIM : kitapID Kitap Adı , ISBN , Kategori , Sayfa Sayısı , Yayınevi GÜNCELLENEBİLİR (HEPSİ GİRİLMELİDİR) | Yazar Adı VE Yazar Soyadı GÜNCELLENEMEZ",
             
-       
+                    "İstatistikler","Arttırım Azalatım İşlemleri",
+                    CagrilacakFonksiyon.CF_1_ISTATISTIKLER_KITAP_YONETIM,CagrilacakFonksiyon.CF_2_ARTTIRIM_AZALTIM_KITAP_YONETIM
+            );
+            
             
                                      //  0    1            2           3          4           5           6         7             8       9
             String kolonIsimleri[] = { "ID", "Kitap Adı","Kitap Stok", "ISBN", "Kategori","Sayfa Sayısı","Fiyat","Yayınevi","Yazar Adı","Yazar Soyadı"};
           
             JTable jtable_kitapListesi = ky_component.addTable(kolonIsimleri,30,15,CagrilacakFonksiyon.CF_TABLE_KITAP_LIST);
+            TableColumn id_col = jtable_kitapListesi.getColumnModel().getColumn(0);
+            id_col.setMaxWidth(50);
             
+            TableColumn kitapADColumn = jtable_kitapListesi.getColumnModel().getColumn(1);
+            kitapADColumn.setPreferredWidth(150);
+            TableColumn stokColumn = jtable_kitapListesi.getColumnModel().getColumn(2);
+            stokColumn.setMaxWidth(50);
+          
+            TableColumn sayfaColumn = jtable_kitapListesi.getColumnModel().getColumn(5);
+            sayfaColumn.setMaxWidth(50);
+            
+            TableColumn fiyatColumn = jtable_kitapListesi.getColumnModel().getColumn(6);
+            fiyatColumn.setMaxWidth(50);
+            
+            
+          
             //EKLEME CIKARTMA
             JTextField tfield_kID = ky_component.addTextField("ID", 25, ButonPozisyon.UST);
             JTextField tfield_kAd = ky_component.addTextField("kitapAd", 25, ButonPozisyon.UST);
@@ -92,8 +111,7 @@ public class kitapYonetimGUI {
             ky_component.setListenerCombobox(cbox_kKategori, CagrilacakFonksiyon.CF_COMBOBOX_FUNC_GET_SELECT_KATEGORI_ID,comboBoxGirdiler,0);
             ky_component.setListenerCombobox(cbox_kYayinevi, CagrilacakFonksiyon.CF_COMBOBOX_FUNC_GET_SELECT_YAYINEVI_ID,comboBoxGirdiler,1);
 //COMBOBOX GIRDILERININ ARKAPLANDA TABLOLARDAN GETIRDIGI ID DEGERLERINI YAKALAYABILMEK VE SAKLAYABILMEK ICIN
-          
-            
+
 
             //Comboboxin geriye cevirdigi veriyi girdilere ekleyebilmemiz lazim
             JButton button_kitapEkle = ky_component.addButtonParams("Kitap Ekle",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_KITAP_EKLE,girdiler,comboBoxGirdiler);
@@ -112,6 +130,8 @@ public class kitapYonetimGUI {
             
             JButton button_kitapYazarTablosu = ky_component.addButton("Kitap Yazar Tablosu", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_NW_KITAP_YAZAR_TABLOSU);
             ky_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kitapYazarTablosu);
+            
+            
         
             
         }
