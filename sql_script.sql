@@ -129,7 +129,6 @@ CREATE TABLE T_ORTAOGRETIM(
     ogrenciID INT UNIQUE,
     FOREIGN KEY (ogrenciID) REFERENCES T_OGRENCI(ogrenciID)
 );
-DROP TABLE T_ORTAOGRETIM;
 
 -- T_OGRENCI TABLOSUNDAN DISJOINT YAPILMISTIR
 CREATE TABLE T_LISANSUSTU(
@@ -144,7 +143,7 @@ CREATE TABLE T_LISANSUSTU(
 
 CREATE TABLE T_SIVIL( -- T_UYELER TABLOSUNDAN OVERLAP				-- --------EMEKLI OLARAK DEGISTIRILEBILIRS
 	sivilID INT AUTO_INCREMENT PRIMARY KEY,
-    sivilGelirMiktar DECIMAL(6,2),
+    sivilGelirMiktar DECIMAL(10,2),
 
     uyeID INT,
 	FOREIGN KEY (uyeID) REFERENCES T_UYELER(uyeID) -- 1 T_UYE <-> N T_SIVIL
@@ -161,10 +160,10 @@ CREATE TABLE T_OZELSEKTOR( -- T_UYELER TABLOSUNDAN OVERLAP
 -- ZAYIF VARLIK : KITAP ILE ARASINDA VAROLMA BAGIMLILIGI VAR
 CREATE TABLE T_ODUNC(
 	oduncID INT AUTO_INCREMENT PRIMARY KEY,
-    oduncAlmaTarih DATETIME,
+    oduncAlmaTarih TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     iadeEtmeTarih DATETIME,
-
-    --
+    oduncIzinGunSayisi INT,
+    cezaKesilenMiktar DECIMAL(10,2),
     kitapID INT , -- ZAYIF VARLIK OLDUGUNDAN ICINDE BAGIMLI OLDUGUNUN PK'SINI EKLEDIK
     uyeID INT,
 
@@ -200,26 +199,7 @@ CREATE TABLE T_YONETICI(
     FOREIGN KEY (personelID) REFERENCES T_PERSONEL(personelID)
 );
 
-SELECT TK.kitapID,
-       TK.kitapAd,
-       TK.kitapStok,
-       TK.kitapISBN,
-       TKategori.kategoriAd,
-       TK.kitapSayfaSayisi,
-       TK.kitapFiyat,
-       TYayin.yayineviAd,
-       TYazar.yazarAd,
-       TYazar.yazarSoyad
-FROM T_KITAP TK
-JOIN T_KATEGORI TKategori ON TK.kategoriID = TKategori.kategoriID
-JOIN T_YAYINEVI TYayin ON TK.yayineviID = TYayin.yayineviID
-JOIN T_KITAP_YAZAR_JT TKYazarJT ON TK.kitapID = TKYazarJT.kitapID
-JOIN T_YAZAR TYazar ON TKYazarJT.yazarID = TYazar.yazarID;
-
-
 -- FONKSIYONLAR: KITAP YONETIM ISTATISTIKLER KISMI ICIN
-USE kutuphaneOtomasyon3;
-
 DELIMITER $$
 CREATE FUNCTION DBF_getKitapSayisi_pKategoriID(ktgID INT)
 RETURNS INT
@@ -244,8 +224,7 @@ BEGIN
 END $$
 DELIMITER ;
 
-DROP FUNCTION DBF_getKitapSayisi_pKategoriID;
-DROP FUNCTION DBF_getKitapSayisi;
+
 
 DELIMITER $$
 CREATE FUNCTION DBF_getToplamSayfaSayisi()
@@ -479,22 +458,6 @@ END $$
 DELIMITER ;
 
 -- PROSEDURLER: ---------------------------------------------------------------------------------------------------
-DELIMITER $$
-CREATE PROCEDURE DBSP_getYazarTamad(IN yazarID INT,OUT yazarTamad VARCHAR(80))
-BEGIN
-
-
-END $$
-DELIMITER ;
-
-USE kutuphaneOtomasyon3;
-
-
-SELECT kategoriID FROM T_KITAP
-WHERE kategoriID = 2;
-
-
-SELECT * FROM T_KITAP;
 
 
 -- CURSOR ILE KITAP FIYATI GUNCELLEME
@@ -625,9 +588,6 @@ DELIMITER ;
 
 
 
--- CREATE PROCEDURE DBSP_kitapFiyatlariBelirliSayfaUzeri
--- CREATE PROCEDURE DBSP_kitapFiyatlariGuncellemeBelirliKitap
-
 -- LOGLAMA KATEGORI
 CREATE TABLE TLOG_KATEGORI(
 	tlogID INT AUTO_INCREMENT PRIMARY KEY,
@@ -649,10 +609,8 @@ CREATE TABLE TLOG_YAZAR(
     tlogDurumAciklamasi VARCHAR(50),
     tlogZaman TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-
 SHOW WARNINGS;
-DROP TABLE TLOG_KATEGORI;
+
 
 -- TLOG_KATEGORI TRIGGERLARI -------------------------------------------------------------------------------------------------
 DELIMITER $$
@@ -731,7 +689,6 @@ END //
 DELIMITER ;
 SHOW WARNINGS;
 
-DROP TRIGGER trigger_deleteYazarLog;
 
 -- 'Note', '4094', 'At line 6 in kutuphaneOtomasyon3.trigger_insertyazarlog' COZULDU TRIGGERDA KOLON FAZLAYDI
 DELIMITER $$
@@ -757,20 +714,3 @@ END $$
 DELIMITER ;
 SHOW WARNINGS;
 DROP TRIGGER trigger_insertYazarLog;
-
-
-
-SELECT * FROM T_YAZAR;
-
-DESCRIBE T_YAZAR;
-INSERT INTO T_YAZAR(yazarAd,yazarSoyad,yazarUlke) VALUES ('Alican','Velican','Türkiye');
-SHOW WARNINGS;
-
-SELECT * FROM T_UYELER;
-SELECT * FROM T_OGRENCI;
-SELECT * FROM T_LISANS;
-
-
-SELECT TU.uyeID ,TU.uyeAd , TU.uyeSoyad , TU.uyeTCNO
-FROM T_UYELER TU;
-

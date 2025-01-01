@@ -25,6 +25,7 @@ import static packGuiSwing.ButonPozisyon.SOL;
 import static packGuiSwing.ButonPozisyon.UST;
 import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_GUNEY;
 import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_KUZEY;
+import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_NW_ODUNC_ISLEMLERI;
 import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_NW_PERSONEL_YONETIM;
 import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_PERSONEL_CIKART;
 import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_PERSONEL_EKLE;
@@ -181,6 +182,21 @@ enum CagrilacakFonksiyon{
     CF_BUTTON_OGRENCI_ISLEMLERI_GUNCELLE,
     CF_COMBOBOX_INDEX_CEVIR,
     
+    CF_BUTTON_SIVIL_ISLEMLERI_EKLE,
+    CF_BUTTON_SIVIL_ISLEMLERI_CIKARTMA,
+    CF_BUTTON_OZELSEKTOR_ISLEMLERI_EKLEME,
+    CF_BUTTON_OZELSEKTOR_ISLEMLERI_CIKARTMA,
+    
+    //T_ODUNC
+    CF_BUTTON_NW_ODUNC_ISLEMLERI,
+    CF_COMBOBOX_DOLDUR_MEVCUT_YAZARLAR,
+    CF_COMBOBOX_DOLDUR_MEVCUT_KITAPLAR,
+    CF_COMBOBOX_FUNC_GET_SELECT_KITAP_ID,
+    CF_COMBOBOX_FUNC_GET_SELECT_YAZAR_ID,
+    CF_BUTTON_ODUNC_EKLEME,
+    CF_COMBOBOX_DOLDUR_MEVCUT_UYE_AD_SOYAD,
+    CF_COMBOBOX_FUNC_GET_SELECT_UYE_ID,
+    CF_BUTTON_ODUNC_CIKARTMA,
     
 }
 
@@ -356,6 +372,10 @@ public class pencereGUI_Component {
                         
                     case CF_BUTTON_NW_UYE_YONETIM_OZELSEKTOR_ISLEMLERI:
                         CF_Caller.CF_BUTTON_NW_UYE_YONETIM_OZELSEKTOR_ISLEMLERI_Func();
+                        break;
+                        
+                    case CF_BUTTON_NW_ODUNC_ISLEMLERI:
+                        CF_Caller.CF_BUTTON_NW_ODUNC_ISLEMLERI_Func();
                         break;
                                 default:
             System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | addButton | pencereGUI_Component");
@@ -718,6 +738,7 @@ public void CF_BUTTON_KITAP_EKLE_Func(
                  girdilerString[3] => uyeTCNO
                  girdilerString[4] => uyeUcret
                  girdilerString[5] => uyeIndirimMiktari
+                 
                  girdilerString[6] => ogrenciOkulAd
                  girdilerString[7] => bolumSTRVeyaSinifINTOrtak
                  girdilerString[8] => ortalamaOrtak
@@ -755,10 +776,86 @@ public void CF_BUTTON_KITAP_EKLE_Func(
              }
              break;
              
+             case CF_BUTTON_OGRENCI_ISLEMLERI_CIKART:{
+                 CF_Caller.CF_BUTTON_OGRENCI_ISLEMLERI_CIKART_Func(Integer.parseInt(girdilerString[0]));
+             }
+                 break;
+                 
+         // SQL_Q_sivilEkle(String uyeAd , String uyeSoyad , String uyeTCNO ,int uyeCinsiyet ,double uyelikUcreti,double uyeIndirimMiktari,
+        // double sivilGelirMiktari)  
+             case CF_BUTTON_SIVIL_ISLEMLERI_EKLE:
+             {
+                 CF_Caller.CF_BUTTON_SIVIL_ISLEMLERI_EKLE_Func(
+                         girdilerString[1], 
+                         girdilerString[2],
+                         girdilerString[3], 
+                         girdilerInteger[0],
+                         Double.parseDouble(girdilerString[4]),
+                         Double.parseDouble(girdilerString[5]),
+                         Double.parseDouble(girdilerString[6])
+                 );
+                 
+                 
+             }
+                 break;
+                 
+                 
+             case CF_BUTTON_SIVIL_ISLEMLERI_CIKARTMA:
+                 CF_Caller.CF_BUTTON_SIVIL_ISLEMLERI_CIKARTMA_Func(Integer.parseInt(girdilerString[0]));
+                 break;
+                 
+                 
+             case CF_BUTTON_OZELSEKTOR_ISLEMLERI_EKLEME:
+                 //SQL_Q_ozelSektorEkle(String uyeAd , String uyeSoyad , String uyeTCNO ,int uyeCinsiyet ,double uyelikUcreti,double uyeIndirimMiktari,boolean kurumAntlasmasi)
+                 boolean antlasma = false;
+                 if(girdilerString[6].trim().toLowerCase().equals("evet") 
+                         || girdilerString[6].trim().toLowerCase().equals("e")
+                         || girdilerString[6].trim().toLowerCase().equals("true")
+                         || girdilerString[6].trim().toLowerCase().equals("yes")
+                         || girdilerString[6].trim().toLowerCase().equals("t")
+                         || girdilerString[6].trim().toLowerCase().equals("y")
+                         )
+                     antlasma = true;
+                 else if(girdilerString[6].trim().toLowerCase().equals("hayır") 
+                         || girdilerString[6].trim().toLowerCase().equals("h")
+                         || girdilerString[6].trim().toLowerCase().equals("hayir")
+                         || girdilerString[6].trim().toLowerCase().equals("false")
+                         || girdilerString[6].trim().toLowerCase().equals("f")
+                         || girdilerString[6].trim().toLowerCase().equals("no")
+                         || girdilerString[6].trim().toLowerCase().equals("n")
+                         )
+                     antlasma = false;
+                 
+                 
+                 CF_Caller.CF_BUTTON_OZELSEKTOR_ISLEMLERI_EKLEME_Func(
+                         girdilerString[1],
+                         girdilerString[2], 
+                         girdilerString[3], 
+                         girdilerInteger[0],
+                         Double.parseDouble(girdilerString[4]),
+                         Double.parseDouble(girdilerString[5]),
+                         antlasma
+                 );
+                 
+                 break;
+                 
+             case CF_BUTTON_OZELSEKTOR_ISLEMLERI_CIKARTMA:
+                 CF_Caller.CF_BUTTON_OZELSEKTOR_ISLEMLERI_CIKARTMA_Func(Integer.parseInt(girdilerString[0]));
+                 break;
+             
+             case CF_BUTTON_ODUNC_EKLEME:
+                 CF_Caller.CF_BUTTON_ODUNC_EKLEME_Func(girdilerInteger[0], girdilerInteger[1], Integer.parseInt(girdilerString[0]));
+                 break;
+                 
+             case CF_BUTTON_ODUNC_CIKARTMA:
+                 CF_Caller.CF_BUTTON_ODUNC_CIKARTMA_Func(girdilerInteger[0], girdilerInteger[1]);
+                 break;
+                 
              
             default:
             System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | addButtonParams | pencereGUI_Component");
             break;
+            
             
             
                 }
@@ -976,6 +1073,18 @@ void all_input_comboBoxButton(ArrayList<JComboBox<String>> comboBoxArrayList, St
                 CF_Caller.CF_COMBOBOX_DOLDURURUCU_Func(databaseIslemler, "yayineviAd", "T_YAYINEVI");
                 break;
                 
+            case CF_COMBOBOX_DOLDUR_MEVCUT_YAZARLAR:
+                CF_Caller.CF_COMBOBOX_DOLDURURUCU_Func(databaseIslemler, "yazarAd","yazarSoyad", "T_YAZAR");
+                break;
+                
+            case CF_COMBOBOX_DOLDUR_MEVCUT_KITAPLAR:
+                CF_Caller.CF_COMBOBOX_DOLDURURUCU_Func(databaseIslemler, "kitapAd", "T_KITAP");
+                break;
+                
+            case CF_COMBOBOX_DOLDUR_MEVCUT_UYE_AD_SOYAD:
+                CF_Caller.CF_COMBOBOX_DOLDUR_MEVCUT_UYE_AD_SOYAD_Func(databaseIslemler, "uyeAd", "uyeSoyad", "T_UYELER");
+                break;
+                
           default:
             System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | addDoldurCombobox | pencereGUI_Component");
             break;
@@ -997,6 +1106,16 @@ void all_input_comboBoxButton(ArrayList<JComboBox<String>> comboBoxArrayList, St
              
          case CF_COMBOBOX_INDEX_CEVIR:
              return comboBox.getSelectedIndex();
+             
+         case CF_COMBOBOX_FUNC_GET_SELECT_KITAP_ID:
+            return CF_Caller.CF_COMBOBOX_FUNC_GET_SELECT_KITAP_ID_Func(databaseIslemler);
+            
+            
+         case CF_COMBOBOX_FUNC_GET_SELECT_YAZAR_ID:
+             return CF_Caller.CF_COMBOBOX_FUNC_GET_SELECT_YAZAR_ID_Func(databaseIslemler);
+             
+         case CF_COMBOBOX_FUNC_GET_SELECT_UYE_ID:
+             return CF_Caller.CF_COMBOBOX_FUNC_GET_SELECT_UYE_ID_Func(databaseIslemler);
              
          default:
             System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | setCombobox | pencereGUI_Component");
@@ -1461,7 +1580,7 @@ public JTable addTable(String kolonAdlari[],int satirYukseklik,int yaziPunto,Cag
             break;
             
         case CF_TABLE_ODUNC_LIST:
-            
+            CF_Caller.CF_TABLE_ODUNC_LIST_Func(databaseIslemler);
             break;
             
         case CF_TABLE_KATEGORI_LOG:
@@ -1634,7 +1753,14 @@ class butonFonksiyonlari{
         ozelsektor_frame.inituyeYonetimiOzelSektorIslemleriGUI(true);
     }
     
+    public void CF_BUTTON_NW_ODUNC_ISLEMLERI_Func(){
+        oduncYonetimOduncIslemleriGUI oyislemleri_frame = new oduncYonetimOduncIslemleriGUI(databaseIslemler);
+        oyislemleri_frame.initoduncYonetimOduncIslemleriGUI(true);
+    }
     
+    
+    
+    //////////////////////////////////////////////////////////////////////////
     
     public void CF_BUTTON_PERSONEL_EKLE_Func(String personelAd,String personelSoyad , double personelMaas,String personelTuru,String EkBilgi){
         databaseIslemler.SQL_Q_personelEkle(personelAd, personelSoyad, personelMaas, personelTuru,EkBilgi);
@@ -1742,10 +1868,42 @@ databaseIslemler.SQL_Q_ogrenciEkle(uyeAd, uyeSoyad, uyeTCNO, cinsiyet, uyeUcret,
 databaseIslemler.SQL_Q_ogrenciEkle(uyeAd, uyeSoyad, uyeTCNO, cinsiyet, uyeUcret, uyeIndirimMiktar, "LISANS", ogrenciOkulAd, bolumSTRVeyaSinifINTOrtak, ortalamaOrtak, kademelerLiseOrtaokul);
         else if(kademelerLisansLisansustu == 2)
 databaseIslemler.SQL_Q_ogrenciEkle(uyeAd, uyeSoyad, uyeTCNO, cinsiyet, uyeUcret, uyeIndirimMiktar, "LISANSUSTU", ogrenciOkulAd, bolumSTRVeyaSinifINTOrtak, ortalamaOrtak, kademelerLiseOrtaokul);
-    
-    
     }
     
+    public void CF_BUTTON_OGRENCI_ISLEMLERI_CIKART_Func(int uyeID){
+        databaseIslemler.SQL_Q_ogrenciCikart(uyeID);
+
+    }
+    
+    
+public void CF_BUTTON_SIVIL_ISLEMLERI_EKLE_Func(String uyeAd , String uyeSoyad , String uyeTCNO ,int uyeCinsiyet ,double uyelikUcreti,double uyeIndirimMiktari,
+        double sivilGelirMiktari){
+    
+    databaseIslemler.SQL_Q_sivilEkle(uyeAd, uyeSoyad, uyeTCNO, uyeCinsiyet, uyelikUcreti, uyeIndirimMiktari, sivilGelirMiktari);
+}
+
+public void CF_BUTTON_SIVIL_ISLEMLERI_CIKARTMA_Func(int uyeID){
+    databaseIslemler.SQL_Q_sivilCikart(uyeID);
+}
+    
+
+public void CF_BUTTON_OZELSEKTOR_ISLEMLERI_EKLEME_Func(String uyeAd , String uyeSoyad , String uyeTCNO ,int uyeCinsiyet ,double uyelikUcreti,double uyeIndirimMiktari
+        ,boolean kurumAntlasmasi){
+    
+    databaseIslemler.SQL_Q_ozelSektorEkle(uyeAd, uyeSoyad, uyeTCNO, uyeCinsiyet, uyelikUcreti, uyeIndirimMiktari, kurumAntlasmasi);
+}
+
+public void CF_BUTTON_OZELSEKTOR_ISLEMLERI_CIKARTMA_Func(int uyeID){
+    databaseIslemler.SQL_Q_ozelSektorCikart(uyeID);
+}
+
+public void CF_BUTTON_ODUNC_EKLEME_Func(int kitapID,int uyeID,int oduncIzinGunSayisi){
+    databaseIslemler.SQL_Q_oduncEkle(kitapID, uyeID, oduncIzinGunSayisi);
+}
+
+public void CF_BUTTON_ODUNC_CIKARTMA_Func(int kitapID , int uyeID){
+    databaseIslemler.SQL_Q_oduncGetirdi(kitapID, uyeID);
+}
     
 }//class butonFonksiyonlari 
 
@@ -1762,9 +1920,20 @@ class comboboxFonksiyonlariSTR{
         this.mevcutPencere = mevcutPencere;
     }
     
+    //////////////////////////////////////
     public void CF_COMBOBOX_DOLDURURUCU_Func(DatabaseIslemler databaseIslemler,String kolonAd , String tabloAd){
         databaseIslemler.SQL_Q_ComboboxDoldurCOL_TABLO(comboBox,kolonAd,tabloAd);
     }
+    
+    public void CF_COMBOBOX_DOLDURURUCU_Func(DatabaseIslemler databaseIslemler,String kolonAd1,String kolonAd2 , String tabloAd){
+        databaseIslemler.SQL_Q_ComboboxDoldurCOL_TABLO(comboBox,kolonAd1,kolonAd2,tabloAd);
+    }
+    //////////////////2 KOLON CEKMEK ICIN OVERLOADLANDI YAZAR AD + SOYAD GIBI
+    public void CF_COMBOBOX_DOLDUR_MEVCUT_UYE_AD_SOYAD_Func(DatabaseIslemler databaseIslemler,String kolon1,String kolon2,String tabloAd){
+                databaseIslemler.SQL_Q_ComboboxDoldurCOL_TABLO(comboBox,kolon1,kolon2,tabloAd);
+    }
+    
+    
     
     public int CF_COMBOBOX_FUNC_GET_SELECT_KATEGORI_ID_Func(DatabaseIslemler databaseIslemler){
         return databaseIslemler.SQL_Q_ComboboxSecilenID(comboBox,"kategoriID","kategoriAd","T_KATEGORI");
@@ -1775,6 +1944,20 @@ class comboboxFonksiyonlariSTR{
         return databaseIslemler.SQL_Q_ComboboxSecilenID(comboBox, "yayineviID", "yayineviAd", "T_YAYINEVI");
     }
     
+    public int CF_COMBOBOX_FUNC_GET_SELECT_KITAP_ID_Func(DatabaseIslemler databaseIslemler){
+        return databaseIslemler.SQL_Q_ComboboxSecilenID(comboBox, "kitapID", "kitapAd", "T_KITAP");
+    }
+    
+    
+    
+    public int CF_COMBOBOX_FUNC_GET_SELECT_YAZAR_ID_Func(DatabaseIslemler databaseIslemler){
+        return databaseIslemler.SQL_Q_ComboboxSecilenID(comboBox, "yazarID", "yazarAd","yazarSoyad", "T_YAZAR");
+    }
+    ////////OVERLOADLANMISTIR 2 SUTUNU BIRLESITRDIGIMIZDEN DOLAYI
+    
+    public int CF_COMBOBOX_FUNC_GET_SELECT_UYE_ID_Func(DatabaseIslemler databaseIslemler){
+        return databaseIslemler.SQL_Q_ComboboxSecilenID(comboBox, "uyeID", "uyeAd", "uyeSoyad", "T_UYELER");
+    }
 }
 
 
@@ -1827,7 +2010,6 @@ class tableFonksiyonlari{
     }
     
     
-    
     //LOG TABLOLARINI CEKME 
     public void CF_TABLE_KATEGORI_LOG_Func(DatabaseIslemler databaseIslemler){
         databaseIslemler.SQL_Q_KategoriLOG_List(tableModel);
@@ -1836,6 +2018,7 @@ class tableFonksiyonlari{
     public void CF_TABLE_YAZAR_LOG_Func(DatabaseIslemler databaseIslemler){
         databaseIslemler.SQL_Q_YazarLOG_List(tableModel);
     }
+    
     
     
     //LOG TABLOLARINI CEKME

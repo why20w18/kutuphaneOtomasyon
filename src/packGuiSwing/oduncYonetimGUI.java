@@ -27,7 +27,7 @@ import packGuiSwing.pencereGUI;
 
 public class oduncYonetimGUI {
     pencereGUI oduncyonetim_frame;
-    pencereGUI_Component oduncyonetim_component;
+    pencereGUI_Component oy_component;
     DatabaseIslemler databaseIslemler;
 
     
@@ -38,7 +38,7 @@ public class oduncYonetimGUI {
         this.databaseIslemler = databaseIslemler;
 
         oduncyonetim_frame = new pencereGUI("ODUNC YONETIM", 800, 750);
-        oduncyonetim_component = new pencereGUI_Component(oduncyonetim_frame,this.databaseIslemler);
+        oy_component = new pencereGUI_Component(oduncyonetim_frame,this.databaseIslemler);
 
         
     }
@@ -50,36 +50,36 @@ public class oduncYonetimGUI {
         
         if(isLayoutActive == true){
             oduncyonetim_frame.initLayout();
-            oduncyonetim_component.infoBar("ODUNCE", 
+            oy_component.infoBar("ODUNCE", 
                     "ODUNCC",
                     "ODUNCG");
             
          
             
                                      //0         1
-            String kolonIsimleri[] = { "ID", "Ödünç Alma Tarihi","İade Etme Tarihi","Kitap Adı","Kitap Yazar","Kitap Sayfa Sayısı","Üye Adı","Üye Türü"};
+            String kolonIsimleri[] = { "ödünçID", "Ödünç Alma Tarihi","İade Etme Tarihi","İzin Verilen Gün","Ceza Miktarı","Üye Tam Adı","Üye Türü","Kitap Adı","Kitap Yazar"};
           
-            JTable jtable_kitapListesi = oduncyonetim_component.addTable(kolonIsimleri,30,15,CagrilacakFonksiyon.CF_TABLE_ODUNC_LIST);
+            JTable jtable_odunc = oy_component.addTable(kolonIsimleri,30,15,CagrilacakFonksiyon.CF_TABLE_ODUNC_LIST);
             
-            //EKLEME CIKARTMA
-            //JTextField tfield_kID = oduncyonetim_component.addTextField("ID", 25, ButonPozisyon.UST);
-            //JTextField tfield_kKategori = oduncyonetim_component.addTextField("kitapKategori", 25, ButonPozisyon.UST);
+            /*
+            1-TUM KITAPLARIN ADINI COMBOBOXA DOLDUR -> geriye kitapID cevirsin +
+            2-TUM YAZARLARIN ADINI COMBOBOXA DOLDUR -> geriye yazarID cevirsin +
+            3-TEXTFIELD IZIN VERILEN GUN SAYISI GIRILSIN
+            4-BUTON olsun odunc aldi seklinde 
+            5-GERI GETIRDIGI TARIHI GUNCELLEME ILE DUZELTEBILELIM
+            6-ceza miktari trigger ile tetiklenip odunclog tablosunda tutulsun
             
+            7-ODUNC ALINAN KITABIN STOGU OTOMATIK AZALSIN
+            8-ODUNC VERILINCE KITABIN STOGU OTOMATIK ARTSIN
+            9-STOK SIFIRSA EKRANA UYARI VERSIN ODUNC VERILEMEZ SEKLINDE
+            */
             
-            String[] girdiler = new String[kolonIsimleri.length];
-            ArrayList<JTextField> textfieldArrayList = new ArrayList<>();
-            
-           //textfieldArrayList.add(tfield_kID);
-           //textfieldArrayList.add(tfield_kKategori);
-           oduncyonetim_component.ListenerTextField(textfieldArrayList, girdiler);   
-            
-            
-          
+            JButton oduncIslemleriButon = oy_component.addButton("Ödünç İşlemleri", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_NW_ODUNC_ISLEMLERI);
             
         }
             
         
-        oduncyonetim_component.updateComponent();
+        oy_component.updateComponent();
     }
     
     

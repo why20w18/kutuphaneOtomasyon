@@ -40,7 +40,7 @@ public class pencereGUI{
         newWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         newWindow.setVisible(true);
-        newWindow.setMinimumSize(new Dimension(800,400));
+        newWindow.setMinimumSize(new Dimension(800,200));
     }
 
     public JFrame getPencereGUIComponent_Addr(){

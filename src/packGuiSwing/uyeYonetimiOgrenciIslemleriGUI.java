@@ -32,10 +32,10 @@ public class uyeYonetimiOgrenciIslemleriGUI {
     public uyeYonetimiOgrenciIslemleriGUI(DatabaseIslemler databaseIslemler) {
         this.databaseIslemler = databaseIslemler;
 
-        uyeyonetimOgrenciIslemleri_frame = new pencereGUI("UYE YONETIM -> OGRENCI ISLEMLERI", 1300, 500);
+        uyeyonetimOgrenciIslemleri_frame = new pencereGUI("UYE YONETIM -> OGRENCI ISLEMLERI", 1300, 200);
         
         uyoi_component = new pencereGUI_Component(uyeyonetimOgrenciIslemleri_frame,this.databaseIslemler);
-
+        uyoi_component.setPanelBoyutlari(-1, -1,75 , 50);
         
     }
     
@@ -45,9 +45,9 @@ public class uyeYonetimiOgrenciIslemleriGUI {
         
         if(isLayoutActive == true){
             uyeyonetimOgrenciIslemleri_frame.initLayout();
-            uyoi_component.infoBar("OGRENCI ISLEMLERI: Öğrenci türü ", 
-                    "ODUNCC",
-                    "ODUNCG");
+            uyoi_component.infoBar("OGRENCI ISLEMLERI: Tüm bilgiler eksiksiz doldurularak ekleme yapılır", 
+                    "OGRENCI ISLEMLERI: Silinmek istenen kaydın ID değeri girilerek silme işlemi yapılır",
+                    "DAHA PROGRAMLANMADI !");
             
          
             JTextField uyeID = uyoi_component.addTextField("ID", 25, ButonPozisyon.UST);
@@ -102,7 +102,7 @@ public class uyeYonetimiOgrenciIslemleriGUI {
             JButton button_kitapEkle = uyoi_component.addButtonParams("Öğrenci Ekle",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_OGRENCI_ISLEMLERI_EKLE,girdiler,comboBoxGirdiler);
             uyoi_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kitapEkle);
             
-            JButton button_kitapCikart = uyoi_component.addButtonParams("Öğrenci Çıkart", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_TANIMLANMADI,girdiler,comboBoxGirdiler);
+            JButton button_kitapCikart = uyoi_component.addButtonParams("Öğrenci Çıkart", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_OGRENCI_ISLEMLERI_CIKART,girdiler,comboBoxGirdiler);
             uyoi_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kitapCikart);
             
             JButton button_kitapGuncelle = uyoi_component.addButtonParams("Öğrenci Güncelle", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_TANIMLANMADI,girdiler,comboBoxGirdiler);
