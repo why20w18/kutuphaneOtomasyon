@@ -11,9 +11,16 @@ EKLEME:PENCERE_ADI	ZORUNLU_ALANLAR İLE EKLENİR
 GÜNCELLEME:PENCERE_ADI	İD DEĞERİ VE İSTENEN ALANLAR GİRİLEREK GÜNCELLENİR
 */
 
+/*
+eklenecekler:
+cursor kitaparttirim
+log dosyası trigger
+disa tablo aktarma
+*/
+
 public class Main {
     
-    public static void main(String[] args){
+    public static void main(String[] args){        
         System.out.println("Main");
         pencereGUI.setDebugOUTPUT(false);
         //VERITABANI BAGLANTISI
@@ -28,18 +35,8 @@ public class Main {
         
         home_frame.initMainGUI(true);
         System.out.println(home_frame.manageHomeFrame().getRetPencereAdi());     
-   
-//////////////////////////////////////////////////////////////////////////////////////////////
-//        System.out.println(dbIslemler.SQL_Q_DBF_getKitapSayisi());
-//        System.out.println(dbIslemler.SQL_Q_DBF_getKitapSayisi_pKategoriID(1));
-//        
-//        System.out.println(dbIslemler.SQL_Q_DBF_getToplamSayfaSayisi());
-//        System.out.println(dbIslemler.SQL_Q_DBF_getToplamSayfaSayisi_pKategoriID(1));
-//        
-//        System.out.println(dbIslemler.SQL_Q_DBF_getYayineviSayisi());
-//        System.out.println(dbIslemler.SQL_Q_DBF_getToplamYazarSayisi());
-//        System.out.println(dbIslemler.SQL_Q_DBF_getKategoriSayisi());
-//////////////////////////////////////////////////////////////////////////////////////////////
+  
+
     }
     
 }

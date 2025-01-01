@@ -27,7 +27,7 @@ public class kategoriTablosuGUI {
         pencereGUI.debugPrint("kitapYonetimGUI BASLATILDI");
         this.databaseIslemler = databaseIslemler;
 
-        kategoritablosu_frame = new pencereGUI("KITAP YONETIM -> KATEGORI TABLOSU", 800, 750);
+        kategoritablosu_frame = new pencereGUI("KITAP YONETIM -> KATEGORI YONETIM", 800, 750);
         kategoritablosu_component = new pencereGUI_Component(kategoritablosu_frame,this.databaseIslemler);
 
         
@@ -40,9 +40,9 @@ public class kategoriTablosuGUI {
         
         if(isLayoutActive == true){
             kategoritablosu_frame.initLayout();
-            kategoritablosu_component.infoBar("sadece kategori adi girerek ekleme yapilir", 
-                    "sadece kategori adi girerek cikartma yapilir",
-                    "hem kategori id hem kategori adi girerek guncelleme yapilir");
+            kategoritablosu_component.infoBar("EKLEME:KATEGORI TABLOSU kategoriAd GİRİLEREK EKLENİR", 
+                    "ÇIKARTMA:KATEGORI TABLOSU kategoriAd GİRİLEREK ÇIKARTMA YAPILIR",
+                    "GÜNCELLEME:KATEGORI TABLOSU kategoriID ve kategoriAd GİRİLEREK GÜNCELLEME YAPILIR");
             
          
             

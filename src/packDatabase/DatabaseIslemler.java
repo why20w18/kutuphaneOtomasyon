@@ -2,6 +2,7 @@ package packDatabase;
 
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
 import com.mysql.cj.protocol.Resultset;
+import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -19,7 +20,15 @@ import javax.swing.JComboBox;
 
 
 /*
-VERITABANINA BAGLANTI BURADA OTOMATIK YAPILIR
+VERITABANINA BAGLANTI BURADA OTOMATIK YAPILIR : constructora gomduk
+
+pst --> PreparedStatement tipindendir
+SELECT                      => geriye resultset cevirir :: ResultSet rst = pst.executeQuery(); :: rst icinde sonuc kumesi bulunur calisan sorgunun ve adim adim icinden veri cekilebilir
+INSERT DELETE UPDATE        => geriye etkilenen satir sayisi cevirir :: int affectedRows = pst.executeUpdate()
+SELECT INSERT DELETE UPDATE => geriye eger resultSet donduyse true , geriye eger etkilenen satir say donduyse false ::: boolean status = pst.execut();
+
+geriye donen resultSet icinde (executQuery) veri olup olmadigini rst.next() while-if idiomlarinda kontrol edilebilir
+
 */
 
 public class DatabaseIslemler {
@@ -112,6 +121,207 @@ public void SQL_Q_oduncKitaplarVeUyeler(){
             ex.printStackTrace();
         }
     }
+
+//////////////////////////////////////////////////////////////////////T_ÜYELER//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////T_ÜYELER//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////T_ÜYELER//////////////////////////////////////////////////////////////////////
+///T_OGRENCI
+
+public void SQL_Q_ogrenciEkle(String uyeAd , String uyeSoyad , String uyeTCNO ,int uyeCinsiyet ,double uyelikUcreti,double uyeIndirimMiktari,
+        String ogrenciTur,String ogrenciOkulAd,String bolumVeyaSinifOrtak , double ortalamaOrtak,int ortaOgretimTur){
+    Connection bg = database.getBaglanti();
+    String sql_uye = "INSERT INTO T_UYELER(uyeAd,uyeSoyad,uyeTCNO,uyeCinsiyet,uyelikUcreti,uyeIndirimMiktari,uyeTuru) "+
+                     "VALUES(?,?,?,?,?,?,'OGRENCI');";
+    
+    
+    System.out.println("AD:"+uyeAd);
+    System.out.println("soyad:"+uyeSoyad);
+    System.out.println("tcno:"+uyeTCNO);
+    System.out.println("cinsiyet:"+uyeCinsiyet);
+    System.out.println("uyelikucret:"+uyelikUcreti);
+    System.out.println("uyeindirim:"+uyeIndirimMiktari);
+    System.out.println("ogrenci turu:"+ogrenciTur);
+    System.out.println("okul ad:"+ogrenciOkulAd);
+    System.out.println("bolumsinif:"+bolumVeyaSinifOrtak);
+    System.out.println("ortalama:"+ortalamaOrtak);
+    System.out.println("ortaogretim tur:"+ortaOgretimTur);    
+    
+    
+    String sql_ogrenci = "INSERT INTO T_OGRENCI(ogrenciOkulAd,ogrenciTuru,uyeID) VALUES(?,?,?);";
+    String sql_ogrenciTuru = null;
+    int sqlOgrenciTurSorgu = -1;
+    
+    if(ogrenciTur.equals("LISANS")){
+        sql_ogrenciTuru = "INSERT INTO T_LISANS(lisansBolum,lisansAGNO,ogrenciID) VALUES(?,?,?);";
+                    sqlOgrenciTurSorgu = 0;
+
+    }
+    else if(ogrenciTur.equals("ORTAOGRETIM")){
+        if(ortaOgretimTur == 0){
+                    sql_ogrenciTuru = "INSERT INTO T_ORTAOGRETIM(ortaogretimSinif,ortaogretimOrtalama,ortaOgretimTuru,ogrenciID) VALUES(?,?,'ILKOKUL',?);";
+            sqlOgrenciTurSorgu = 1;
+        }
+        
+        else if(ortaOgretimTur == 1){
+                    sql_ogrenciTuru = "INSERT INTO T_ORTAOGRETIM(ortaogretimSinif,ortaogretimOrtalama,ortaOgretimTuru,ogrenciID) VALUES(?,?,'ORTAOKUL',?);";
+            sqlOgrenciTurSorgu = 2;
+        }
+        
+        else if(ortaOgretimTur == 2){
+                    sql_ogrenciTuru = "INSERT INTO T_ORTAOGRETIM(ortaogretimSinif,ortaogretimOrtalama,ortaOgretimTuru,ogrenciID) VALUES(?,?,'LISE',?);";
+                        sqlOgrenciTurSorgu = 3;
+        }
+        
+    
+    }
+    else if(ogrenciTur.equals("LISANSUSTU")){
+        sql_ogrenciTuru = "INSERT INTO T_LISANSUSTU(lisansBolum,lisansUstuAGNO,ogrenciID) VALUES(?,?);";
+                                sqlOgrenciTurSorgu = 4;
+    }
+  
+    
+    try{
+        //T_UYELERE EKLEME ISLEMI
+        PreparedStatement pst = bg.prepareStatement(sql_uye);
+        pst.setString(1, uyeAd);
+        pst.setString(2, uyeSoyad);
+        pst.setString(3, uyeTCNO);
+        
+        if(uyeCinsiyet == 0)
+            pst.setString(4, "K");
+        else if(uyeCinsiyet == 1)
+            pst.setString(4, "E");
+        
+        pst.setDouble(5, uyelikUcreti);
+        pst.setDouble(6, uyeIndirimMiktari);
+        
+        int affected = pst.executeUpdate();
+        
+        if(affected <= 0)
+            System.out.println("OGRENCI UYE BILGILERI UYE TABLOSUNA EKLENEMEDI !");
+        else 
+            System.out.println("OGRENCININ UYE BILGILERI UYE TABLOSUNA EKLENDI !");
+        
+        //T_OGRENCI
+        //INSERT INTO T_OGRENCI(ogrenciOkulAd,ogrenciTuru) VALUES(?,?);
+        PreparedStatement pst1 = bg.prepareStatement(sql_ogrenci);
+       pst1.setString(1, ogrenciOkulAd);
+        if(ogrenciTur.equals("LISANS"))
+            pst1.setString(2, "LISANS");
+        else if(ogrenciTur.equals("LISANSUSTU"))
+            pst1.setString(2, "LISANSUSTU");
+        else if(ogrenciTur.equals("ORTAOGRETIM"))
+            pst1.setString(2, "ORTAOGRETIM");
+        
+        //AYRI BIR SORGUYLA UYEIDYI CEK
+        int uyeID = 0;
+        if((uyeID=SQL_Q_getUyeID_pTC(uyeTCNO)) == -1){
+            System.out.println("OGRENCI T_UYELER TABLOSUNA EKLENEMEDI !");
+            return;
+        }
+        pst1.setInt(3, uyeID);
+        
+        
+        affected = 0;
+        affected = pst1.executeUpdate();
+        
+        if(affected <= 0)
+            System.out.println("OGRENCININ OKUL_ADI VE TIPI T_OGRENCIYE EKLENIRKEN HATA");
+        else 
+            System.out.println("OGRENCI T_OGRENCI TABLOSUNA BASARIYLA EKLENDI");
+        
+        
+        
+        
+        //OGRENCI ALT DALLARINI BAGLAMA
+        PreparedStatement pst2 = bg.prepareStatement(sql_ogrenciTuru);
+        
+        //ORTAOGRETIM SORGUSUDUR
+        //                    sql_ogrenciTuru = "INSERT INTO T_ORTAOGRETIM(ortaogretimSinif,ortaogretimOrtalama,ortaOgretimTuru,ogrenciID) VALUES(?,?,'LISE',?);";
+        if(sqlOgrenciTurSorgu > 0 && sqlOgrenciTurSorgu < 4){
+            pst2.setInt(1, Integer.parseInt(bolumVeyaSinifOrtak));
+        }
+        else{
+            pst2.setString(1, bolumVeyaSinifOrtak);
+        }
+       
+       pst2.setDouble(2, ortalamaOrtak);
+       
+       int ogrenciID = 0;
+       if((ogrenciID = SQL_Q_getOgrenciID_pUyeID(uyeID)) == -1){
+           System.out.println("OGRENCI T_OGRENCI TABLOSUNA EKLENEMEDI !");
+           return;
+       }
+       pst2.setInt(3, ogrenciID);
+       
+       System.out.println("nihahi sorgu::"+pst2);
+       
+       affected = 0;
+       affected = pst2.executeUpdate();
+       
+       if(affected <= 0)
+            System.out.println("NIHAI OGRENCI TURU TABLOSUNA EKLEME BASARISIZ !");
+       else 
+            System.out.println("NIHAI OGRENCI TURU TABLOSUNA EKLEME BASARILIDIR !");
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+}
+
+public int SQL_Q_getUyeID_pTC(String tcno){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT uyeID FROM T_UYELER WHERE uyeTCNO=?;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setString(1, tcno);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int uyeID = rst.getInt("uyeID");
+            return uyeID;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    return -1;
+}
+
+public int SQL_Q_getOgrenciID_pUyeID(int uyeID){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT ogrenciID FROM T_OGRENCI WHERE uyeID=?;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setInt(1, uyeID);
+        ResultSet rst = pst.executeQuery();
+        
+        if(rst.next()){
+            int ogrenciID = rst.getInt("ogrenciID");
+            return ogrenciID;
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    return -1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 //////////////////////////////////////////////////////////////////////T_PERSONEL////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////T_PERSONEL////////////////////////////////////////////////////////
@@ -309,13 +519,122 @@ public void SQL_Q_personelGuncelle(int personelID, String personelAd, String per
 }
 
 
+//////////////////////////////////////////////////////////////////////T_UYELER////////////////////////////////////////////////////////    
+//////////////////////////////////////////////////////////////////////T_UYELER////////////////////////////////////////////////////////    
+//////////////////////////////////////////////////////////////////////T_UYELER////////////////////////////////////////////////////////    
+/*
+T_UYELER --> T_SIVIL | T_OGRENCI | T_OZELSEKTOR
+                            |
+                            +
+                            T_LISANS
+                            T_LISANSUSTU
+                            T_ORTAOGRETIM
+   */
+
+public void SQL_Q_uyeList(DefaultTableModel model){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT TU.uyeID,TU.uyeAd,TU.uyeSoyad,TU.uyeTCNO,TU.uyeCinsiyet,TU.uyelikUcreti,TU.uyeKayitTarih,TU.uyeIndirimMiktari,TU.uyeTuru,"+
+                 "TOG.ogrenciID,TOG.ogrenciOkulAd,TOG.ogrenciTuru,TOL.lisansBolum,TOL.lisansAGNO,TOGR.ortaogretimSinif,TOGR.ortaogretimOrtalama,TOGR.ortaOgretimTuru,"+
+                 "TOLU.lisansBolum,TOLU.lisansUstuAGNO,TS.sivilGelirMiktar,TOS.ozelSektorKurumAntlasma "+
+                 "FROM T_UYELER TU "+
+                 "LEFT JOIN T_SIVIL TS ON TU.uyeID = TS.uyeID "+
+                 "LEFT JOIN T_OZELSEKTOR TOS ON TU.uyeID = TOS.uyeID "+
+                 "LEFT JOIN T_OGRENCI TOG ON TU.uyeID = TOG.uyeID "+
+                 "LEFT JOIN T_LISANS TOL ON TOG.ogrenciID = TOL.ogrenciID "+
+                 "LEFT JOIN T_LISANSUSTU TOLU ON TOG.ogrenciID = TOLU.ogrenciID "+
+                 "LEFT JOIN T_ORTAOGRETIM TOGR ON TOG.ogrenciID = TOGR.ogrenciID;";
+                  
+            
+            
+    String ekBilgi = null;
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        while(rst.next()){
+            int uyeID = rst.getInt("uyeID");
+            String uyeAd = rst.getString("uyeAd");
+            String uyeSoyad = rst.getString("uyeSoyad");
+            String uyeTCNO = rst.getString("uyeTCNO");
+            String uyeCinsiyet = rst.getString("uyeCinsiyet");
+            double uyelikUcreti = rst.getDouble("uyelikUcreti");
+            String uyeKayitTarih = rst.getString("uyeKayitTarih");
+            double uyeIndirimMiktari = rst.getDouble("uyeIndirimMiktari");
+            String uyeTuru = rst.getString("uyeTuru");
+            
+            //T_OGRENCI
+            String ogrenciTuru = rst.getString("ogrenciTuru");
+            
+                //T_LISANS
+            String lisansBolumTOL = rst.getString("TOL.lisansBolum");
+            double lisansAGNO = rst.getDouble("lisansAGNO");
+                //T_LISANSUSTU
+            String lisansBolumTOLU = rst.getString("TOLU.lisansBolum");
+            double lisansUstuAGNO = rst.getDouble("lisansUstuAGNO");
+                //T_ORTAOGRETIM
+            int ortaogretimSinif = rst.getInt("ortaogretimSinif");
+            int ortaogretimOrtalama = rst.getInt("ortaogretimOrtalama");
+            String ortaOgretimTuru = rst.getString("ortaOgretimTuru");
+            
+            //T_SIVIL
+            double sivilGelirMiktar = rst.getDouble("sivilGelirMiktar");
+            
+            //T_OZELSEKTOR
+            boolean ozelSektorKurumAntlasma = rst.getBoolean("ozelSektorKurumAntlasma");            
+          
+            
+            if(uyeTuru.equals("OGRENCI")){
+                if(ogrenciTuru.equals("LISANS")){
+                    ekBilgi = "|"+ogrenciTuru + "|" + lisansBolumTOL + "|" + "AGNO:"+lisansAGNO+"|"; 
+                }
+                
+                else if(ogrenciTuru.equals("LISANSUSTU")){
+                    ekBilgi = "|"+ogrenciTuru + "|" + lisansBolumTOLU + "|" + "Lisansüstü AGNO:"+lisansUstuAGNO+"|"; 
+                }
+                
+                else if(ogrenciTuru.equals("ORTAOGRETIM")){
+                    ekBilgi = "|"+ogrenciTuru + "|" + ortaOgretimTuru + "|"+"Sınıf:"+ortaogretimSinif+"|"+"Ortalama:"+ortaogretimOrtalama+"|"; 
+                }
+            }
+            
+            else if(uyeTuru.equals("SIVIL")){
+                ekBilgi = "|"+"Sivil Gelir:"+sivilGelirMiktar+"|";
+            }
+            
+            else if(uyeTuru.equals("OZELSEKTOR")){
+                ekBilgi = "|"+"Özel Sektör Antlaşması:"+ozelSektorKurumAntlasma+"|";
+            }
+            
+            model.addRow(new Object[]{uyeID,uyeAd+" "+uyeSoyad,uyeTCNO,uyeCinsiyet,uyelikUcreti,uyeKayitTarih,uyeIndirimMiktari,uyeTuru,ekBilgi});
+            
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    
+}
+
+
+
+
+
+
+
+
+
+
 
     
 
 //////////////////////////////////////////////////////////////////////T_KITAP////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////T_KITAP////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////T_KITAP////////////////////////////////////////////////////////    
-public void SQL_Q_kitapListesi(DefaultTableModel tableModel) {
+public void SQL_Q_kitapListesi(DefaultTableModel tableModel){ 
+    //OVERLOADLANMIS VERSIYONLARI KITAP YONETIMDEKI KITAP FILTRELEME SEKMESI ICIN SADECE SORGUDA DEGISIKLIK YAPILIR
     Connection bg = database.getBaglanti();
 
     
@@ -367,6 +686,228 @@ public void SQL_Q_kitapListesi(DefaultTableModel tableModel) {
     }
 }
 
+//KITAP FILTRELEME ICIN 3 FARKLI SEKILDE SQL SORGUSU CALISTIRIP TABLOYA DONDURMESI BEKLENEN FONKSIYON
+//String kolonIsimleri[] = { "+", "+","+", "+", "Kategori","Sayfa Sayısı","Fiyat","Yayınevi","Yazar Adı","Yazar Soyadı"};
+public void SQL_Q_kitapListesi(DefaultTableModel tableModel,int kategoriID,int yayineviID,boolean kategoriID_LOCK,boolean yayineviID_LOCK){
+    String sql = "TANIMLANMADI";
+    int secilen = 0;
+    
+    System.out.println("KATEGORI_ID_FILTRELEME : "+ kategoriID + " /// YAYINEVI_ID FILTRELEME : "+yayineviID);
+    
+    //ikiside kitliyse tumunu cek
+    if(kategoriID_LOCK == false && yayineviID_LOCK == false){
+        SQL_Q_kitapListesi(tableModel);
+        secilen = 0;
+        return;
+    }
+    
+    //KATEGORI SECIMI - 1
+    else if(kategoriID_LOCK == true && yayineviID_LOCK == false){
+        sql = "SELECT TK.kitapID , TK.kitapAd , TK.kitapStok , TK.kitapISBN ,"+
+               "TKategori.kategoriAd ,TK.kitapSayfaSayisi , TK.kitapFiyat , TYayin.yayineviAd , TYazar.yazarAd , TYazar.yazarSoyad "+
+               "FROM T_KITAP TK "+
+                "LEFT JOIN T_KATEGORI TKategori ON TKategori.kategoriID = TK.kategoriID "+
+                "LEFT JOIN T_YAYINEVI TYayin ON TYayin.yayineviID = TK.yayineviID "+
+                "LEFT JOIN T_KITAP_YAZAR_JT KYTJT ON KYTJT.kitapID = TK.kitapID "+
+                "LEFT JOIN T_YAZAR TYazar ON TYazar.yazarID = KYTJT.yazarID "+
+                "WHERE TK.kategoriID = ?;";
+    
+        secilen = 1;
+    }
+    
+    
+    //YAYINEVI SECIMI - 2
+    else if(kategoriID_LOCK == false && yayineviID_LOCK == true){
+        sql = "SELECT TK.kitapID , TK.kitapAd , TK.kitapStok , TK.kitapISBN ,"+
+               "TKategori.kategoriAd ,TK.kitapSayfaSayisi , TK.kitapFiyat , TYayin.yayineviAd , TYazar.yazarAd , TYazar.yazarSoyad "+
+               "FROM T_KITAP TK "+
+                "LEFT JOIN T_KATEGORI TKategori ON TKategori.kategoriID = TK.kategoriID "+
+                "LEFT JOIN T_YAYINEVI TYayin ON TYayin.yayineviID = TK.yayineviID "+
+                "LEFT JOIN T_KITAP_YAZAR_JT KYTJT ON KYTJT.kitapID = TK.kitapID "+
+                "LEFT JOIN T_YAZAR TYazar ON TYazar.yazarID = KYTJT.yazarID "+
+                "WHERE TK.yayineviID = ?;";
+        secilen = 2;
+    }
+     
+    
+    
+    //KATEGORI VE YAYINEVINE GORE TUMU
+    else if(kategoriID_LOCK == true && yayineviID_LOCK == true){
+        sql = "SELECT TK.kitapID , TK.kitapAd , TK.kitapStok , TK.kitapISBN ,"+
+               "TKategori.kategoriAd ,TK.kitapSayfaSayisi , TK.kitapFiyat , TYayin.yayineviAd , TYazar.yazarAd , TYazar.yazarSoyad "+
+               "FROM T_KITAP TK "+
+                "LEFT JOIN T_KATEGORI TKategori ON TKategori.kategoriID = TK.kategoriID "+
+                "LEFT JOIN T_YAYINEVI TYayin ON TYayin.yayineviID = TK.yayineviID "+
+                "LEFT JOIN T_KITAP_YAZAR_JT KYTJT ON KYTJT.kitapID = TK.kitapID "+
+                "LEFT JOIN T_YAZAR TYazar ON TYazar.yazarID = KYTJT.yazarID "+
+                "WHERE TK.kategoriID = ?  AND TK.yayineviID = ?;";
+        secilen = 3;
+    }
+    Connection bg = database.getBaglanti();
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        if(secilen == 1)
+            pst.setInt(1, kategoriID);
+        else if(secilen == 2)
+            pst.setInt(1, yayineviID);
+        else if(secilen == 3){
+            pst.setInt(1, kategoriID);
+            pst.setInt(2, yayineviID);
+        }
+            
+        var rs = pst.executeQuery();
+        
+        while(rs.next()){ //verileri cekme sorgudan donen sonuctan
+            int kitapID = rs.getInt("kitapID");
+            String kitapAd = rs.getString("kitapAd");
+            int kitapStok = rs.getInt("kitapStok");
+            String kitapISBN = rs.getString("kitapISBN");
+            String kategoriAd = rs.getString("kategoriAd");
+            int kitapSayfaSayisi = rs.getInt("kitapSayfaSayisi");
+            double kitapFiyat = rs.getDouble("kitapFiyat");
+            String yayineviAd = rs.getString("yayineviAd");
+            String yazarAd = rs.getString("yazarAd");
+            String yazarSoyad = rs.getString("yazarSoyad");
+            
+            tableModel.addRow(new Object[]{kitapID,kitapAd,kitapStok,kitapISBN,kategoriAd,kitapSayfaSayisi,kitapFiyat,yayineviAd,yazarAd+" "+yazarSoyad});
+            
+        }
+        
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }   
+}
+
+public void DBSP_kitapFiyatlariArttirYuzdeKategoriye(double artimMiktari , int kategoriID){
+    Connection bg = database.getBaglanti();
+    String sql = "CALL DBSP_kitapFiyatlariArttirYuzdeKategoriye(?,?);";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setDouble(1, artimMiktari);
+        pst.setInt(2, kategoriID);
+        
+        int affected = pst.executeUpdate();
+        
+        if(affected <= 0){
+            System.out.println("FIYATLAR ARTTIRILAMADI !");
+        }
+        else 
+            System.out.println("FIYATLAR ARTTIRILDI !");
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }   
+}
+
+public void DBSP_kitapFiyatlariAzaltYuzdeKategoriye(double artimMiktari , int kategoriID){
+    Connection bg = database.getBaglanti();
+    String sql = "CALL DBSP_kitapFiyatlariAZALTYuzdeKategoriye(?,?);";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setDouble(1, artimMiktari);
+        pst.setInt(2, kategoriID);
+        
+        int affected = pst.executeUpdate();
+        
+        if(affected <= 0)
+            System.out.println("FIYAT AZALTIM ISLEMINDE HATA MEYDANA GELDI");
+        else 
+            System.out.println("FIYAT AZALTIM ISLEMI BASARILI OLDU !");
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }   
+}
+
+public void DBSP_tumKitapFiyatlariArttirma(double artimMiktari){
+    Connection bg = database.getBaglanti();
+    String sql = "CALL DBSP_tumKitapFiyatlariArttirma(?);";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setDouble(1, artimMiktari);
+        int affected = pst.executeUpdate();
+        
+        if(affected <= 0)
+            System.out.println("TUM KITAP FIYATLARI ARTTIRMA BASARISIZ !");
+        else 
+            System.out.println("TUM KITAP FIYATLARI ARTTIRMA BASARILI !");
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }   
+}
+
+public void DBSP_tumKitapFiyatlariAzaltma(double artimMiktari){
+    Connection bg = database.getBaglanti();
+    
+    String sql = "CALL DBSP_tumKitapFiyatlariAzaltma(?);";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setDouble(1, artimMiktari);
+        
+        int affected = pst.executeUpdate();
+        if(affected <= 0)
+            System.out.println("TUM KITAP FIYATLARINI AZALTMA BASARISIZ !");
+        else 
+            System.out.println("TUM KITAP FIYATLARINI ARTTIRMA BASARILI !");
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+}
+
+public void DBSP_kitapFiyatlariArttirYayinevine(double artimMiktari , int yayineviID){
+    Connection bg = database.getBaglanti();
+    String sql = "CALL DBSP_kitapFiyatlariArttirYayinevine(?,?);";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setDouble(1, artimMiktari);
+        pst.setInt(2, yayineviID);
+        
+        int affected = pst.executeUpdate();
+        
+        if(affected <= 0)
+            System.out.println("KITAP FIYATLARI YAYINEVINE GORE ARTTIRILAMADI !");
+        else 
+            System.out.println("KITAP FIYATLARI YAYINEVINE GORE ARTTIRILDI BASARILI!");
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+}
+
+public void DBSP_kitapFiyatlariAzaltmaYayinevine(double artimMiktari , int yayineviID){
+    Connection bg = database.getBaglanti();
+    String sql = "CALL DBSP_kitapFiyatlariAzaltmaYayinevine(?,?);";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setDouble(1, artimMiktari);
+        pst.setInt(2, yayineviID);
+        
+        int affected = pst.executeUpdate();
+        
+        if(affected <= 0)
+            System.out.println("KITAP FIYATLARI YAYINEVINE GORE AZALTILAMADI !");
+        else 
+            System.out.println("KITAP FIYATLARI YAYINEVINE GORE AZALTILDI BASARILI !");
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  /*
 1- kitap verileri eklenmelidir
 2-sonra yazar ekle SQL_Q fonksiyonu cagrilmali ve yazarUlke = "BILINMEYEN" olarak eklenmelidir
@@ -842,28 +1383,56 @@ public int SQL_Q_ComboboxSecilenID(JComboBox<String> comboBox,String idKolonAd ,
     return -1;
 }
 
-public int SQL_Q_kategoriCikart(String kategoriAd){
+public int SQL_Q_kategoriCikart(int kategoriID){
     Connection bg = database.getBaglanti();
-    String sql = "DELETE FROM T_KATEGORI WHERE kategoriAd = ?;";
+    
+    /*
+    SILMEDEN ONCE BAGLANTILI KITAP KONTROL EDILMELIDIR
+    */
+    
+    if(SQL_Q_kategoriIcindeKitapVarMi(kategoriID)){
+        //-1 donusunu buton fonksiyonunda yakalayip uyari cikartma
+        return -1;
+    }
+    
+    String sql = "DELETE FROM T_KATEGORI WHERE kategoriID = ?;";
     int silienenSatirSay = 0;
     
     try {
         PreparedStatement pst = bg.prepareStatement(sql);
-        pst.setString(1, kategoriAd); //kategori adini sorguya gomduk
+        pst.setInt(1, kategoriID); //kategori adini sorguya gomduk
         
         silienenSatirSay = pst.executeUpdate();
         if(silienenSatirSay != 0)
-            System.out.println(kategoriAd+" KATEGORISI SILINMISTIR !");
+            System.out.println("KATEGORI SILINMISTIR !");
         
         else if (silienenSatirSay == 0){
-            System.out.println(kategoriAd+" KATEGORISI SILINEMEDI !");
+            System.out.println("KATEGORI SILINEMEDI !");
         }
     }       
     catch (SQLException ex) {
         ex.printStackTrace();
     }
     
-    return silienenSatirSay; 
+    return -2; //baglanti problemi syntax hatasi 
+}
+
+public boolean SQL_Q_kategoriIcindeKitapVarMi(int kategoriID){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT kategoriID FROM T_KITAP WHERE kategoriID = ?;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        pst.setInt(1, kategoriID);
+        ResultSet rst = pst.executeQuery();
+         
+        return rst.next();
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+    
+    return false;
 }
 
 
@@ -925,77 +1494,67 @@ public void SQL_Q_YazarListele(DefaultTableModel model){
 
 }
 
-public void SQL_Q_YazarEkle(String yazarAd , String yazarSoyad , String yazarUlke){
+public int SQL_Q_YazarEkle(String yazarAd , String yazarSoyad , String yazarUlke){
     Connection bg = database.getBaglanti();
     String sql = "INSERT INTO T_YAZAR(yazarAd,yazarSoyad,yazarUlke) VALUES (?,?,?);";
-    
+    System.out.println("yazar ekle SQL_Q : "+yazarAd+" "+yazarSoyad+" "+yazarUlke);
     try{
         PreparedStatement pst = bg.prepareStatement(sql);
         pst.setString(1, yazarAd);
         pst.setString(2, yazarSoyad);
         pst.setString(3, yazarUlke);
-        
+        System.out.println("Oluşturulan SQL: " + pst.toString());
         pst.execute();
+        
     }
     catch(SQLException ex){
         ex.printStackTrace();
-    }
-}
-
-public int SQL_Q_YazarCikart(int yazarID) {
-    Connection bg = database.getBaglanti();
-    if(SQL_Q_yazarKitabaSahipMi(yazarID)){
-        System.out.println("YAZAR KITABA SAHIPTIR BU YAZARI SILEMEZSINIZ !");
         return -1;
-    }
-    
-    /*
-        1-yazarin kitaplari varsa silmeye izin verme 
-        2-ilk once kitaplari kaldirilmasi gerektigini belirt
-    */
-    String sqlDeleteFromKitapYazarJT = "DELETE FROM T_KITAP_YAZAR_JT WHERE yazarID = ?";
-    String sqlDeleteFromYazarYayineviJT = "DELETE FROM T_YAZAR_YAYINEVI_JT WHERE yazarID = ?";
-    String sqlDeleteFromYazar = "DELETE FROM T_YAZAR WHERE yazarID = ?";
-
-    
-    try {
-        PreparedStatement pstKitapYazarJT = bg.prepareStatement(sqlDeleteFromKitapYazarJT);
-        pstKitapYazarJT.setInt(1, yazarID);
-        pstKitapYazarJT.executeUpdate();
-
-        PreparedStatement pstYazarYayineviJT = bg.prepareStatement(sqlDeleteFromYazarYayineviJT);
-        pstYazarYayineviJT.setInt(1, yazarID);
-        pstYazarYayineviJT.executeUpdate();
-
-        PreparedStatement pstYazar = bg.prepareStatement(sqlDeleteFromYazar);
-        pstYazar.setInt(1, yazarID);
-        int rowAffected = pstYazar.executeUpdate();
-
-        if (rowAffected > 0) {
-            System.out.println("Yazar başarıyla silindi!");
-        }
-        else {
-            System.out.println("Silme işlemi başarısız! Yazar bulunamadı.");
-        }
-
-    } catch (SQLException ex) {
-        try {
-            bg.rollback();
-            System.out.println("Hata oluştu. İşlem geri alındı.");
-        } catch (SQLException rollbackEx) {
-            rollbackEx.printStackTrace();
-        }
-        ex.printStackTrace();
-    } finally {
-        try {
-            bg.setAutoCommit(true);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
     }
     
     return 1;
 }
+
+public int SQL_Q_YazarCikart(int yazarID) {
+    Connection bg = database.getBaglanti();
+    System.out.println("YAZAR ID SQL_Q : "+yazarID);
+    if (SQL_Q_yazarKitabaSahipMi(yazarID)) {
+        System.out.println("YAZAR KITABA SAHIPTIR BU YAZARI SILEMEZSINIZ!");
+        return -1;
+    }
+
+    String sqlDeleteFromYazarYayineviJT = "DELETE FROM T_YAZAR_YAYINEVI_JT WHERE yazarID = ?;";
+    String sqlDeleteFromYazar = "DELETE FROM T_YAZAR WHERE yazarID = ?;";
+
+    try {
+        PreparedStatement pstYazarYayineviJT = bg.prepareStatement(sqlDeleteFromYazarYayineviJT);
+        pstYazarYayineviJT.setInt(1, yazarID);
+        int rowAffected = pstYazarYayineviJT.executeUpdate();
+        if(rowAffected <= 0)
+            System.out.println("YAZAR YAYINEVI TABLOSUNDA YAZAR CIKARTILAMADI BASARISIZ !");
+        else 
+            System.out.println("YAZAR YAYINEVI TABLOSUNDA YAZAR CIKARTILDI BASARILI !");
+        
+        
+        rowAffected = 0;
+        PreparedStatement pstYazar = bg.prepareStatement(sqlDeleteFromYazar);
+        pstYazar.setInt(1, yazarID);
+        rowAffected = pstYazar.executeUpdate();
+
+        if (rowAffected > 0) {
+            System.out.println("SİLME BAŞARILI: YAZAR");
+        } else {
+            System.out.println("SİLME BAŞARISIZ! : YAZAR");
+        }
+
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        
+    }
+
+    return 1;
+}
+
 
 public boolean SQL_Q_yazarKitabaSahipMi(int yazarID){
     Connection bg = database.getBaglanti();
@@ -1640,6 +2199,67 @@ public int SQL_Q_DBF_farkliUlkeYazarSayisi(){
     return 0;
 }
         
+
+
+public void SQL_Q_KategoriLOG_List(DefaultTableModel model){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT tlogID,tlogKategoriEskiAd,tlogKategoriYeniAd,tlogKategoriID,tlogDurumAciklamasi,tlogZaman "+
+                 "FROM TLOG_KATEGORI;";
+    
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        while(rst.next()){
+            int tlogID = rst.getInt("tlogID");
+            String kategoriEskiAd = rst.getString("tlogKategoriEskiAd");
+            String kategoriYeniAd = rst.getString("tlogKategoriYeniAd");
+            int kategoriEskiID = rst.getInt("tlogKategoriID");
+            String durumAciklamasi = rst.getString("tlogDurumAciklamasi");
+            String logZaman = rst.getString("tlogZaman");
+            
+            model.addRow(new Object[]{tlogID,kategoriEskiAd,kategoriYeniAd,kategoriEskiID,durumAciklamasi,logZaman});
+        }
+        
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    } 
+}
+
+
+public void SQL_Q_YazarLOG_List(DefaultTableModel model){
+    Connection bg = database.getBaglanti();
+    String sql = "SELECT tlogID,tlogYazarEskiAd,tlogYazarEskiSoyad,tlogYazarEskiUlke,tlogYazarYeniAd,tlogYazarYeniSoyad,tlogYazarYeniUlke,tlogDurumAciklamasi,tlogZaman "+
+                 "FROM TLOG_YAZAR;";
+   
+    try{
+        PreparedStatement pst = bg.prepareStatement(sql);
+        ResultSet rst = pst.executeQuery();
+        
+        while(rst.next()){
+            int tlogID = rst.getInt("tlogID");
+            String tlogYazarEskiAd = rst.getString("tlogYazarEskiAd");
+            String tlogYazarEskiSoyad = rst.getString("tlogYazarEskiSoyad");
+            String tlogYazarEskiUlke = rst.getString("tlogYazarEskiUlke");
+            String tlogYazarYeniAd = rst.getString("tlogYazarYeniAd");
+            String tlogYazarYeniSoyad = rst.getString("tlogYazarYeniSoyad");
+            String tlogYazarYeniUlke = rst.getString("tlogYazarYeniUlke");
+            String tlogDurumAciklamasi = rst.getString("tlogDurumAciklamasi");
+            String tlogZaman = rst.getString("tlogZaman");
+            
+            model.addRow(new Object[]{tlogID,tlogYazarEskiAd+" "+tlogYazarEskiSoyad,tlogYazarEskiUlke,
+                tlogYazarYeniAd+" "+tlogYazarYeniSoyad,tlogYazarYeniUlke,tlogDurumAciklamasi,tlogZaman});
+            
+        }
+    }
+    catch(SQLException ex){
+        ex.printStackTrace();
+    }
+
+
+}
+   
         
         
 

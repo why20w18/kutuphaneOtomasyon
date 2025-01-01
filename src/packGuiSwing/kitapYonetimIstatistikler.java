@@ -21,7 +21,7 @@ public class kitapYonetimIstatistikler {
 
         kitapyonetimistatistikler_frame = new pencereGUI("KITAP YONETIM -> ISTATISTIKLER", 600, 400);
         kyista_component = new pencereGUI_Component(kitapyonetimistatistikler_frame,this.databaseIslemler);
-
+        kyista_component.setPanelBoyutlari(400, 180, -1, -1);
         
     }
     
@@ -102,7 +102,7 @@ public class kitapYonetimIstatistikler {
             kategoriLabelArray[2] = yayinevindekiKitapSayisi;
             kategoriLabelArray[3] = yayinevindekiKSayfaSayi;
             
-            JButton button_kategoriYayineviListele = kyista_component.addButtonParams("KATEGORI LISTELE",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_KATEGORI_LISTELE_LABEL,comboBoxGirdiler,kategoriLabelArray);
+            JButton button_kategoriYayineviListele = kyista_component.addButtonParams("KATEGORI/YAYINEVI LISTELE",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_KATEGORI_LISTELE_LABEL,comboBoxGirdiler,kategoriLabelArray);
             
             
         }

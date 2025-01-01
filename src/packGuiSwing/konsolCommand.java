@@ -57,7 +57,7 @@ public class konsolCommand{
             return "\n"+databaseIslemler.SQL_Q_EXEC_Query(sql.trim());
         }
         
-      ////AGGRETE ISLEMLER:
+      ////AGGRETE ISLEMLER: ZAM ICIN
       
         
 

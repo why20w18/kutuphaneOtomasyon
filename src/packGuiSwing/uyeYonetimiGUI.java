@@ -32,7 +32,7 @@ import packGuiSwing.pencereGUI;
 
 public class uyeYonetimiGUI {
     pencereGUI uyeyonetim_frame;
-    pencereGUI_Component oduncyonetim_component;
+    pencereGUI_Component uyeyonetim_component;
     DatabaseIslemler databaseIslemler;
 
     
@@ -43,8 +43,8 @@ public class uyeYonetimiGUI {
         this.databaseIslemler = databaseIslemler;
 
         uyeyonetim_frame = new pencereGUI("UYE YONETIM", 800, 750);
-        oduncyonetim_component = new pencereGUI_Component(uyeyonetim_frame,this.databaseIslemler);
-
+        uyeyonetim_component = new pencereGUI_Component(uyeyonetim_frame,this.databaseIslemler);
+        uyeyonetim_component.setPanelBoyutlari(-1, -1, -1, 60);
         
     }
     
@@ -55,36 +55,28 @@ public class uyeYonetimiGUI {
         
         if(isLayoutActive == true){
             uyeyonetim_frame.initLayout();
-            oduncyonetim_component.infoBar("ODUNCE", 
+            uyeyonetim_component.infoBar("ODUNCE", 
                     "ODUNCC",
                     "ODUNCG");
             
          
             
-                                     //0         1
-            String kolonIsimleri[] = { "ID", "Ödünç Alma Tarihi","İade Etme Tarihi","Kitap Adı","Kitap Yazar","Kitap Sayfa Sayısı","Üye Adı","Üye Türü"};
+                                     //0         1     2        3       4               5               6                   7           8
+            String kolonIsimleri[] = { "üyeID", "Tam Ad","TC","Cinsiyet","Üyelik Ücret","Kayıt Tarihi","Üye İndirim Miktarı","Üye Türü","Üye Ek Bilgi"};
+            JTable jtable_uyeler = uyeyonetim_component.addTable(kolonIsimleri,30,15,CagrilacakFonksiyon.CF_TABLE_UYE_LIST);
           
-            JTable jtable_kitapListesi = oduncyonetim_component.addTable(kolonIsimleri,30,15,CagrilacakFonksiyon.CF_TABLE_ODUNC_LIST);
             
-            //EKLEME CIKARTMA
-            //JTextField tfield_kID = oduncyonetim_component.addTextField("ID", 25, ButonPozisyon.UST);
-            //JTextField tfield_kKategori = oduncyonetim_component.addTextField("kitapKategori", 25, ButonPozisyon.UST);
-            
-            
-            String[] girdiler = new String[kolonIsimleri.length];
-            ArrayList<JTextField> textfieldArrayList = new ArrayList<>();
-            
-           //textfieldArrayList.add(tfield_kID);
-           //textfieldArrayList.add(tfield_kKategori);
-           oduncyonetim_component.ListenerTextField(textfieldArrayList, girdiler);   
+            JButton ogrenciIslemleriButon = uyeyonetim_component.addButton("Öğrenci İşlemleri", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_NW_UYE_YONETIM_OGRENCI_ISLEMLERI);
+            JButton sivilIslemleriButon = uyeyonetim_component.addButton("Sivil İşlemleri", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_NW_UYE_YONETIM_SIVIL_ISLEMLERI);
+            JButton ozelSektorIslemleriButon = uyeyonetim_component.addButton("Özel Sektör İşlemleri", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_NW_UYE_YONETIM_OZELSEKTOR_ISLEMLERI);
             
             
-          
+            
+            
+            
             
         }
-            
-        
-        oduncyonetim_component.updateComponent();
+        uyeyonetim_component.updateComponent();
     }
     
     

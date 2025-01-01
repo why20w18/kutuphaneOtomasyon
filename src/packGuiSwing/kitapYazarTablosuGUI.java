@@ -39,7 +39,7 @@ public class kitapYazarTablosuGUI {
         pencereGUI.debugPrint("kitapYonetimGUI BASLATILDI");
         this.databaseIslemler = databaseIslemler;
 
-        kitapyazartablosu_frame = new pencereGUI("KITAP YONETIM -> KITAP YAZAR TABLOSU", 800, 750);
+        kitapyazartablosu_frame = new pencereGUI("KITAP YAZAR YONETIM", 800, 750);
         kyt_component = new pencereGUI_Component(kitapyazartablosu_frame,this.databaseIslemler);
 
         

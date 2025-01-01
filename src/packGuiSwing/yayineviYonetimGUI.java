@@ -33,7 +33,7 @@ public class yayineviYonetimGUI {
         pencereGUI.debugPrint("yayineviYonetimGUI BASLATILDI");
         this.databaseIslemler = databaseIslemler;
 
-        yayineviyonetim_frame = new pencereGUI("YAYINEVI YONETIM", 800, 750);
+        yayineviyonetim_frame = new pencereGUI("KITAP YONETIM -> YAYINEVI YONETIM", 800, 750);
         yaey_component = new pencereGUI_Component(yayineviyonetim_frame,this.databaseIslemler);
 
         

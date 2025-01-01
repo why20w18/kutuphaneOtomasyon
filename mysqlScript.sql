@@ -75,19 +75,30 @@ CREATE TABLE T_KITAP_YAZAR_JT (
 
 
 
-
+-- UYELER VE ODUNC TABLOLARI ------------------------------------------------------------------------------------------------------------------------------
 CREATE TABLE T_UYELER(
 	uyeID INT AUTO_INCREMENT PRIMARY KEY,
+    uyeAd VARCHAR(40) NOT NULL,
+    uyeSoyad VARCHAR(40) NOT NULL,
+    uyeTCNO VARCHAR(11) UNIQUE NOT NULL,
     uyeCinsiyet ENUM('E','K'),
-    uyeAd VARCHAR(30),
-    uyelikUcreti DECIMAL(4,1),
-    uyeKayitTarih DATETIME,
+    uyelikUcreti DECIMAL(10,2),
+    uyeKayitTarih TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     uyeIndirimMiktari DECIMAL(3,1),
-    uyeTCNO char(11) UNIQUE,				-- ---------------------------------------------YENI EKLENDI
-
     uyeTuru ENUM('OGRENCI','SIVIL','OZELSEKTOR')
-    -- YAS BURADAN PROSEDURLE TURETILEBILIR
 );
+SHOW WARNINGS;
+
+USE kutuphaneOtomasyon3;
+DROP TABLE T_UYELER;
+DROP TABLE T_ODUNC;
+DROP TABLE T_OGRENCI;
+DROP TABLE T_LISANS;
+DROP TABLE T_ORTAOGRETIM;
+DROP TABLE T_LISANSUSTU;
+DROP TABLE T_OZELSEKTOR;
+DROP TABLE T_SIVIL;
+SHOW WARNINGS;
 
 CREATE TABLE T_OGRENCI( -- T_UYELER TABLOSUNDAN OVERLAP
 	ogrenciID INT AUTO_INCREMENT PRIMARY KEY,
@@ -112,12 +123,13 @@ CREATE TABLE T_LISANS(
 CREATE TABLE T_ORTAOGRETIM(
 	ortaogretimID INT AUTO_INCREMENT PRIMARY KEY,
 	ortaogretimSinif INT,
-    ortaogretimOrtalama INT,
+    ortaogretimOrtalama DECIMAL(4,2),
     ortaOgretimTuru ENUM('ILKOKUL','ORTAOKUL','LISE'),
 
     ogrenciID INT UNIQUE,
     FOREIGN KEY (ogrenciID) REFERENCES T_OGRENCI(ogrenciID)
 );
+DROP TABLE T_ORTAOGRETIM;
 
 -- T_OGRENCI TABLOSUNDAN DISJOINT YAPILMISTIR
 CREATE TABLE T_LISANSUSTU(
@@ -159,6 +171,9 @@ CREATE TABLE T_ODUNC(
     FOREIGN KEY (kitapID) REFERENCES T_KITAP(kitapID),
     FOREIGN KEY (uyeID) REFERENCES T_UYELER(uyeID)
 );
+
+
+-- ---------------------------------------------------------------------------------------------------------------------------------------------
 
 -- PERSONELIN KITAPLA MANTIKSAL BIR BAGLANTISI YOK
 CREATE TABLE T_PERSONEL(
@@ -463,13 +478,299 @@ BEGIN
 END $$
 DELIMITER ;
 
--- PROSEDURLER:
+-- PROSEDURLER: ---------------------------------------------------------------------------------------------------
 DELIMITER $$
-CREATE PROCEDURE getYazarTamad(IN yazarID INT,OUT yazarTamad VARCHAR(80))
+CREATE PROCEDURE DBSP_getYazarTamad(IN yazarID INT,OUT yazarTamad VARCHAR(80))
 BEGIN
 
 
 END $$
 DELIMITER ;
 
+USE kutuphaneOtomasyon3;
+
+
+SELECT kategoriID FROM T_KITAP
+WHERE kategoriID = 2;
+
+
+SELECT * FROM T_KITAP;
+
+
+-- CURSOR ILE KITAP FIYATI GUNCELLEME
+DELIMITER $$
+CREATE PROCEDURE DBSP_tumKitapFiyatlariArttirma(IN artimMiktari DECIMAL(10,2))
+BEGIN
+	DECLARE done BOOL DEFAULT FALSE;
+	DECLARE c_kitap_id INT;
+    DECLARE c_kitap_fiyat DECIMAL(10,2);
+
+    DECLARE cursorGuncelleyici CURSOR FOR
+    SELECT kitapID , kitapFiyat FROM T_KITAP; -- kategori yok
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    OPEN cursorGuncelleyici;
+
+    cursor_gezinti: LOOP
+		FETCH cursorGuncelleyici INTO c_kitap_id , c_kitap_fiyat;
+
+        IF done THEN
+			LEAVE cursor_gezinti;
+        END IF;
+
+        UPDATE T_KITAP
+        SET kitapFiyat = c_kitap_fiyat + (c_kitap_fiyat * (artimMiktari/100))
+        WHERE kitapID = c_kitap_id;
+
+    END LOOP;
+	CLOSE cursorGuncelleyici;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE DBSP_tumKitapFiyatlariAzaltma(IN artimMiktari DECIMAL(10,2))
+BEGIN
+	-- CURSOR DUURM
+    DECLARE done INT DEFAULT 0; -- false
+	-- CUROSRUN CEKECEKLERI
+    DECLARE c_kitap_id INT;
+    DECLARE c_kitap_fiyat DECIMAL(10,6);
+
+    DECLARE cursorGuncelleyici CURSOR FOR
+    SELECT kitapID , kitapFiyat FROM T_KITAP;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    OPEN cursorGuncelleyici;
+    cursor_gezinti: LOOP
+		FETCH cursorGuncelleyici INTO c_kitap_id , c_kitap_fiyat;
+
+        IF done THEN
+			LEAVE cursor_gezinti;
+        END IF;
+
+        UPDATE T_KITAP
+        SET kitapFiyat = c_kitap_fiyat - (c_kitap_fiyat * (artimMiktari/100));
+    END LOOP;
+
+    CLOSE cursorGuncelleyici;
+END $$
+DELIMITER ;
+
+
+ -- CURSORSUZ
+DELIMITER $$
+CREATE PROCEDURE DBSP_kitapFiyatlariArttirYuzdeKategoriye(IN artimMiktar DECIMAL(10,2),IN ktgID INT)
+BEGIN
+    UPDATE T_KITAP
+    SET kitapFiyat = kitapFiyat +(kitapFiyat*(artimMiktar/100))
+    WHERE kategoriID = ktgID;
+END $$
+DELIMITER ;
+-- DROP PROCEDURE DBSP_kitapFiyatlariArttirYuzdeKategoriye;
+
+-- CURSORLU
+DELIMITER $$
+CREATE PROCEDURE DBSP_kitapFiyatlariAZALTYuzdeKategoriye(IN artimMiktar DECIMAL(10,2),IN ktgID INT)
+BEGIN
+	DECLARE done BOOL DEFAULT FALSE;
+    DECLARE c_kitap_id INT;
+    DECLARE c_mevcutFiyat DECIMAL(10,2);
+
+    DECLARE guncelleyiciCursor CURSOR FOR
+    SELECT kitapID , kitapFiyat
+    FROM T_KITAP
+    WHERE kategoriID = ktgID; -- cursor icine gomduk
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    OPEN guncelleyiciCursor;
+
+    cursor_gezinti: LOOP
+		FETCH guncelleyiciCursor INTO c_kitap_id , c_mevcutFiyat;
+
+			IF done THEN
+				LEAVE cursor_gezinti;
+			END IF;
+
+            UPDATE T_KITAP
+            SET kitapFiyat = c_mevcutFiyat - (c_mevcutFiyat * (artimMiktar/100))
+            WHERE kitapID = c_kitap_id;
+
+    END LOOP;
+
+    CLOSE guncelleyiciCursor;
+END $$
+DELIMITER ;
+DROP PROCEDURE DBSP_kitapFiyatlariAZALTYuzdeKategoriye;
+
+
+-- CURSORSUZ YAYINEVINE GORE FIYAT ARTTIRMA - azaltma
+DELIMITER $$
+CREATE PROCEDURE DBSP_kitapFiyatlariArttirYayinevine(IN artimMiktari DECIMAL(10,2),IN yayinID INT)
+BEGIN
+	UPDATE T_KITAP
+    SET kitapFiyat = kitapFiyat + (kitapFiyat * (artimMiktari/100))
+    WHERE yayineviID = yayinID;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE DBSP_kitapFiyatlariAzaltmaYayinevine(IN artimMiktari DECIMAL(10,2),IN yayinID INT)
+BEGIN
+	UPDATE T_KITAP
+    SET kitapFiyat = kitapFiyat - (kitapFiyat * (artimMiktari/100))
+    WHERE yayineviID = yayinID;
+END $$
+DELIMITER ;
+
+
+
+-- CREATE PROCEDURE DBSP_kitapFiyatlariBelirliSayfaUzeri
+-- CREATE PROCEDURE DBSP_kitapFiyatlariGuncellemeBelirliKitap
+
+-- LOGLAMA KATEGORI
+CREATE TABLE TLOG_KATEGORI(
+	tlogID INT AUTO_INCREMENT PRIMARY KEY,
+    tlogKategoriEskiAd VARCHAR(50),
+    tlogKategoriYeniAd VARCHAR(50),
+    tlogKategoriID INT,
+    tlogDurumAciklamasi VARCHAR(50),
+    tlogZaman TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE TLOG_YAZAR(
+	tlogID INT AUTO_INCREMENT PRIMARY KEY ,
+    tlogYazarEskiAd VARCHAR(50),
+    tlogYazarEskiSoyad VARCHAR(50),
+    tlogYazarEskiUlke VARCHAR(50),
+    tlogYazarYeniAd VARCHAR(50),
+    tlogYazarYeniSoyad VARCHAR(50),
+    tlogYazarYeniUlke VARCHAR(50),
+    tlogDurumAciklamasi VARCHAR(50),
+    tlogZaman TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+SHOW WARNINGS;
+DROP TABLE TLOG_KATEGORI;
+
+-- TLOG_KATEGORI TRIGGERLARI -------------------------------------------------------------------------------------------------
+DELIMITER $$
+CREATE TRIGGER trigger_updateKategoriLog
+AFTER UPDATE ON T_KATEGORI
+FOR EACH ROW
+BEGIN
+    IF OLD.kategoriAd != NEW.kategoriAd THEN
+        INSERT INTO TLOG_KATEGORI(tlogKategoriEskiAd, tlogKategoriYeniAd, tlogKategoriID,tlogDurumAciklamasi)
+        VALUES (OLD.kategoriAd, NEW.kategoriAd, OLD.kategoriID,'GUNCELLEME YAPILDI');
+    END IF;
+END $$
+DELIMITER ;
+SHOW WARNINGS;
+
+-- DELETE TRIGGERDA NEW YOK
+DELIMITER //
+CREATE TRIGGER trigger_deleteKategoriLog
+AFTER DELETE ON T_KATEGORI
+FOR EACH ROW
+BEGIN
+	INSERT INTO TLOG_KATEGORI(tlogKategoriEskiAd,tlogKategoriYeniAd,tlogKategoriID,tlogDurumAciklamasi)
+    VALUES(OLD.kategoriAd,'SILINEN_KATEGORI',OLD.kategoriID,'SILME YAPILDI');
+END //
+DELIMITER ;
+
+
+-- INSERT TRIGGERDA OLD YOK
+DELIMITER $$
+CREATE TRIGGER trigger_insertKategoriLog
+AFTER INSERT ON T_KATEGORI
+FOR EACH ROW
+BEGIN
+	INSERT INTO TLOG_KATEGORI(tlogKategoriEskiAd,tlogKategoriYeniAd,tlogKategoriID,tlogDurumAciklamasi)
+    VALUES('YENI_EKLENEN_KATEGORI',NEW.kategoriAd,NEW.kategoriID,'EKLEME YAPILDI');
+END $$
+DELIMITER ;
+
+DROP TRIGGER trigger_updateKategoriLog;
+DROP TRIGGER trigger_deleteKategoriLog;
+DROP TRIGGER trigger_insertKategoriLog;
+-- TLOG_YAZAR TRIGGERLARI -------------------------------------------------------------------------------------------------
+
+DELIMITER $$
+CREATE TRIGGER trigger_updateYazarLog
+AFTER UPDATE ON T_YAZAR
+FOR EACH ROW
+BEGIN
+	IF (NEW.yazarAd != OLD.yazarAd) OR (NEW.yazarSoyad != OLD.yazarSoyad) OR (NEW.yazarUlke != OLD.yazarUlke) THEN
+		INSERT INTO TLOG_YAZAR(tlogYazarEskiAd, -- 1
+							   tlogYazarEskiSoyad,
+                               tlogYazarEskiUlke,
+                               tlogYazarYeniAd,
+                               tlogYazarYeniSoyad,
+                               tlogYazarYeniUlke,
+                               tlogDurumAciklamasi) -- 7
+		VALUES (OLD.yazarAd,OLD.yazarSoyad,OLD.yazarUlke,NEW.yazarAd,NEW.yazarSoyad,NEW.yazarUlke,'GUNCELLEME YAPILDI');
+    END IF ;
+END $$
+DELIMITER ;
+
+DELIMITER  //
+CREATE TRIGGER trigger_deleteYazarLog
+AFTER DELETE ON T_YAZAR
+FOR EACH ROW
+BEGIN
+		INSERT INTO TLOG_YAZAR(tlogYazarEskiAd, -- 1
+							   tlogYazarEskiSoyad,
+                               tlogYazarEskiUlke,
+                               tlogYazarYeniAd,
+                               tlogYazarYeniSoyad,
+                               tlogYazarYeniUlke,
+                               tlogDurumAciklamasi) -- 7
+        VALUES(OLD.yazarAd,OLD.yazarSoyad,OLD.yazarUlke,'SILINDI','SILINDI','SILINDI','SILME YAPILDI');
+END //
+DELIMITER ;
+SHOW WARNINGS;
+
+DROP TRIGGER trigger_deleteYazarLog;
+
+-- 'Note', '4094', 'At line 6 in kutuphaneOtomasyon3.trigger_insertyazarlog' COZULDU TRIGGERDA KOLON FAZLAYDI
+DELIMITER $$
+CREATE TRIGGER trigger_insertYazarLog
+AFTER INSERT ON T_YAZAR
+FOR EACH ROW
+BEGIN
+	INSERT INTO TLOG_YAZAR(tlogYazarEskiAd, -- 1
+						   tlogYazarEskiSoyad,
+						   tlogYazarEskiUlke,
+                           tlogYazarYeniAd,
+                           tlogYazarYeniSoyad,
+                           tlogYazarYeniUlke,
+                           tlogDurumAciklamasi) -- 7
+	VALUES ('YENI_EKLENDI', -- 1
+			'YENI_EKLENDI',
+            'YENI_EKLENDI',
+            NEW.yazarAd,
+            NEW.yazarSoyad,
+            NEW.yazarUlke,
+            'EKLEME YAPILDI'); -- 7
+END $$
+DELIMITER ;
+SHOW WARNINGS;
+DROP TRIGGER trigger_insertYazarLog;
+
+
+
+SELECT * FROM T_YAZAR;
+
+DESCRIBE T_YAZAR;
+INSERT INTO T_YAZAR(yazarAd,yazarSoyad,yazarUlke) VALUES ('Alican','Velican','Türkiye');
+SHOW WARNINGS;
+
+SELECT * FROM T_UYELER;
+SELECT * FROM T_OGRENCI;
+SELECT * FROM T_LISANS;
+
+
+SELECT TU.uyeID ,TU.uyeAd , TU.uyeSoyad , TU.uyeTCNO
+FROM T_UYELER TU;
 

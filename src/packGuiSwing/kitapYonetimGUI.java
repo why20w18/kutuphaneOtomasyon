@@ -43,12 +43,13 @@ public class kitapYonetimGUI {
         if(isLayoutActive == true){
             kitapyonetim_frame.initLayout();
             ky_component.infoBar(
+                    "Yardım ve Ek Özellikler",
                     "KITAP YONETIM : Kitap Adı , ISBN , Kategori , Sayfa Sayısı , Yayınevi , Yazar Adı , Yazar Soyadı EKSİKSİZ GİRİLEREK EKLEME YAPILIR",
                     "KITAP YONETIM : kitapID GIRILEREK ISTENEN KITAP SILINEBILIR", 
                     "KITAP YONETIM : kitapID Kitap Adı , ISBN , Kategori , Sayfa Sayısı , Yayınevi GÜNCELLENEBİLİR (HEPSİ GİRİLMELİDİR) | Yazar Adı VE Yazar Soyadı GÜNCELLENEMEZ",
             
-                    "İstatistikler","Arttırım Azalatım İşlemleri",
-                    CagrilacakFonksiyon.CF_1_ISTATISTIKLER_KITAP_YONETIM,CagrilacakFonksiyon.CF_2_ARTTIRIM_AZALTIM_KITAP_YONETIM
+                    "İstatistikler","Arttırım Azalatım İşlemleri","Kitap Filtreleme",
+                    CagrilacakFonksiyon.CF_1_ISTATISTIKLER_KITAP_YONETIM,CagrilacakFonksiyon.CF_2_ARTTIRIM_AZALTIM_KITAP_YONETIM,CagrilacakFonksiyon.CF_3_KITAP_FILTRELEME_KITAP_YONETIM
             );
             
             
@@ -61,6 +62,7 @@ public class kitapYonetimGUI {
             
             TableColumn kitapADColumn = jtable_kitapListesi.getColumnModel().getColumn(1);
             kitapADColumn.setPreferredWidth(150);
+            
             TableColumn stokColumn = jtable_kitapListesi.getColumnModel().getColumn(2);
             stokColumn.setMaxWidth(50);
           
@@ -68,7 +70,7 @@ public class kitapYonetimGUI {
             sayfaColumn.setMaxWidth(50);
             
             TableColumn fiyatColumn = jtable_kitapListesi.getColumnModel().getColumn(6);
-            fiyatColumn.setMaxWidth(50);
+            fiyatColumn.setMaxWidth(85);
             
             
           
@@ -125,12 +127,14 @@ public class kitapYonetimGUI {
             
             
             
-            JButton button_kategoriMevcut = ky_component.addButton("Kategori Tablosu", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_NW_KATEGORI_TABLOSU);
+            JButton button_kategoriMevcut = ky_component.addButton("Kategori Yönetimi", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_NW_KATEGORI_TABLOSU);
             ky_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kategoriMevcut);
             
-            JButton button_kitapYazarTablosu = ky_component.addButton("Kitap Yazar Tablosu", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_NW_KITAP_YAZAR_TABLOSU);
-            ky_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kitapYazarTablosu);
+            //JButton button_kitapYazarTablosu = ky_component.addButton("Kitap Yazar Tablosu", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_NW_KITAP_YAZAR_TABLOSU);
+            //ky_component.all_input_textFieldButton(textfieldArrayList, girdiler, button_kitapYazarTablosu);
             
+            JButton buton9 = ky_component.addButton("Yayınevi Yönetimi",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_NW_YAYINEVI_YONETIM);
+        
             
         
             

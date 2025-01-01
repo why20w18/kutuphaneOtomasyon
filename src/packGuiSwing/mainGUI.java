@@ -64,7 +64,13 @@ public class mainGUI {
             JButton buton8 = hf_component.addButton("Üye Yönetimi",ButonPozisyon.UST,CagrilacakFonksiyon.CF_BUTTON_NW_UYE_YONETIM);
 
             JButton buton2 = hf_component.addButton("Yazar Yönetimi",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_NW_YAZAR_YONETIM);
-            JButton buton9 = hf_component.addButton("Yayınevi Yönetimi",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_NW_YAYINEVI_YONETIM);
+            
+            
+            //JButton buton9 = hf_component.addButton("Yayınevi Yönetimi",ButonPozisyon.ALT,CagrilacakFonksiyon.CF_BUTTON_NW_YAYINEVI_YONETIM);
+            JButton button_kitapYazarTablosu = hf_component.addButton("Kitap Yazar Yönetimi", ButonPozisyon.ALT, CagrilacakFonksiyon.CF_BUTTON_NW_KITAP_YAZAR_TABLOSU);
+            
+            
+            
             JTextField messager = hf_component.addTextField("Konsol:", 400, ButonPozisyon.ALT);
             konsolCommand cmd = new konsolCommand(konsol, databaseIslemler);
             hf_component.enterListener(messager, konsol,cmd);
