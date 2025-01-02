@@ -1,44 +1,66 @@
 # Kütüphane Otomasyon Programı
 
 <details>
-<summary>VERİTABANI BAĞLANTISI HAKKINDA</summary>
-
-* L1
-
-* L2
-```
-function Course(props){
-return ( <div></div>);}
-```
-
-* Props nedir?
-Conceptually, components are like JavaScript functions. They accept arbitrary inputs (called “props”) and return React elements describing what should appear on the screen.
-</details>
-
-<details>
 <summary>pGUI KÜTÜPHANESİ HAKKINDA</summary>
 
-* L3
+* Programdaki tüm SWING/AWT Componentleri Özelleştirilmiş ve soyutlanmıştır farklı Java Programlarındada taşınabilir şekilde kullanılabilir
 
-* L4
+* pencereGUI ve pencereGUI_Component Fonksiyonların deklerasyonları ve açıklamaları aşağıdadır
 ```
-const [value,setValue] = useState(0);
-value : değişken,
-setValue : değişken ataması için fonksiyon
-useState(0) : başlangıç değeri
++
 ```
-
-* L5
 </details>
+
+
+<details>
+<summary>DİZİNLER HAKKINDA</summary>
+
+* ./src/            : Programdaki tüm kaynak kodları içeren kısım
+
+* ./jarBagimlilik/  : Programda MySQL ile bağlantı kurmak için gerekli olan jar dosyası
+```
+.
+├── packDatabase
+│   ├── databaseBaglanti.java
+│   └── DatabaseIslemler.java
+├── packGuiSwing
+│   ├── kategoriLogGUI.java
+│   ├── kategoriTablosuGUI.java
+│   ├── kitapYazarTablosuGUI.java
+│   ├── kitapYonetimFiltrelemeGUI.java
+│   ├── kitapYonetimGUI_ArttirimAzaltim.java
+│   ├── kitapYonetimGUI.java
+│   ├── kitapYonetimIstatistikler.java
+│   ├── konsolCommand.java
+│   ├── mainGUI.java
+│   ├── oduncYonetimGUI.java
+│   ├── oduncYonetimOduncIslemleriGUI.java
+│   ├── pencereGUI_Component.java
+│   ├── pencereGUI.java
+│   ├── personelYonetimGUI.java
+│   ├── uyeYonetimiGUI.java
+│   ├── uyeYonetimiOgrenciIslemleriGUI.java
+│   ├── uyeYonetimOzelSektorIslemleri.java
+│   ├── uyeYonetimSivilIslemleriGUI.java
+│   ├── yayineviYonetimGUI.java
+│   ├── yazarLogGUI.java
+│   └── yazarYonetimGUI.java
+├── packImages
+│   └── splashLogo.png
+└── packSourceCode
+    └── Main.java
+
+```
+</details>
+
+
 
 
 <details>
 <summary>KONSOL HAKKINDA</summary>
 
- * L6
+ * Konsol üzerinden doğrudan DDL ve DML komut setleri çalıştırılabilir şu anda tam olarak soyutlanıp güvenlik testleri yapılmasada kullanılabilir
  ```
-const title = props.title;
-const description = props.description;
-const {title,description} = props;
+ +
 ```
  
