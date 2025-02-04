@@ -14,15 +14,6 @@ import packDatabase.DatabaseIslemler;
 
 import packGuiSwing.pencereGUI;
 
-/*
-1-HER PENCERE ICIN YENI CLASS ACILMALIDIR
-2-HER PENCERE/SEKME KENDI CLASSI ICINDE .getStartFrame() ILE BASLATILMALIDIR
-3-.getStartFrame() CONSTRUCTOR ICINE KOYULMAMALIDIR initCLASS_ADI SEKLINDE YENI METOD
-ACILARAK 2.ADIMDA BASLATILMALIDIR
-4-initLayout() , initCLASS_ADI ICERISINDE LAYOUT AKTIFLIGI KONTROLUNDEN SONRA BASLATILMALIDIR
-*/
-
-
 public class mainGUI {
     pencereGUI home_frame;
     pencereGUI_Component hf_component;
