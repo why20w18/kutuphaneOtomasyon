@@ -11,7 +11,7 @@ public class Main {
         System.out.println("Main");
         pencereGUI.setDebugOUTPUT(false);
         //VERITABANI BAGLANTISI
-        databaseBaglanti database = new databaseBaglanti("qw","kutuphaneOtomasyon3",3306);
+        databaseBaglanti database = new databaseBaglanti("qw","kutuphaneOtomasyon",3306);
         database.databaseBaglan();
         
         DatabaseIslemler dbIslemler = new DatabaseIslemler(database);
