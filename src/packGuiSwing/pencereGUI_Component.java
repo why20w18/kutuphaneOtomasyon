@@ -270,17 +270,10 @@ public class pencereGUI_Component {
     
     //BUTON ISLEMLERI
     public JButton addButton(String buttonText , ButonPozisyon butonPozisyon , CagrilacakFonksiyon butonFonksiyonu){
-        //pencereGUI.debugPrint(countUpdate+"COMPONENTLER GUNCELLENDI MI : "+this.isUpdate + "<------");
 
-        
        JButton button = new JButton(buttonText);
        button.setMinimumSize(new Dimension(100, 50));
        komponentPozisyonlandiricisi(button, butonPozisyon);
-       //Border border = new LineBorder(Color.BLACK, 2);
-       //button.setBorder(border);
-
-       
-        
 
        butonFonksiyonlari CF_Caller = new butonFonksiyonlari(button, mevcutPencere,databaseIslemler);
        
@@ -583,20 +576,6 @@ public class pencereGUI_Component {
                         System.out.println("GIRDILERSTRING[5]=KITAP_SAYFA  " + girdilerString[5]);   //KITAP SAYFA_SAY   INT
                         System.out.println("GIRDILERSTRING[6]=YAZAR_AD  " + girdilerString[6]);   //YAZAR AD          STRING
                         System.out.println("GIRDILERSTRING[7]=YAZAR_SOYAD  " + girdilerString[7]);   //YAZAR SOYAD       STRING
-
-                        /*
-                        
-public void CF_BUTTON_KITAP_EKLE_Func(
-            String kitapAd,
-            int kitapStok,
-            String ISBN,
-            int kitapSayfaSayisi,
-            double kitapFiyat,
-            String yazarAd,
-            String yazarSoyad,
-            int kategoriID,
-            int yayineviID)                        
-                        */
                         
                         
                         if(!checkGirdiStringISNULL_ISEMPTY(1, girdilerString.length, girdilerString, CF_Caller, "EKSIK PARAMETRELERLE EKLEME YAPAMAZSINIZ"))
@@ -697,37 +676,6 @@ public void CF_BUTTON_KITAP_EKLE_Func(
              break;
            
              case CF_BUTTON_OGRENCI_ISLEMLERI_EKLE:{
-                 /*PARAMETRELER VE KARSILIKLARI
-                 girdilerInt[0] => uyeCinsiyet 0=K 1=E
-                 girdilerInt[1] => 0=Ortaöğretim 1=Lisans 2=Lisansüstü
-                 girdilerInt[2] => 0=İlkokul 1=Ortaokul 3=Lise
-                 
-                 girdilerString[0] => uyeID
-                 girdilerString[1] => uyeAd
-                 girdilerString[2] => uyeSoyad
-                 girdilerString[3] => uyeTCNO
-                 girdilerString[4] => uyeUcret
-                 girdilerString[5] => uyeIndirimMiktari
-                 
-                 girdilerString[6] => ogrenciOkulAd
-                 girdilerString[7] => bolumSTRVeyaSinifINTOrtak
-                 girdilerString[8] => ortalamaOrtak
-                 */
-                 /*
-           CF_BUTTON_OGRENCI_ISLEMLERI_EKLE_Func(
-                 String uyeAd,+
-                 String uyeSoyad,+
-                 String uyeTCNO,+
-                 double uyeUcret,+
-                 double uyeIndirimMiktar,+
-                 String ogrenciOkulAd,+
-                 String bolumSTRVeyaSinifINTOrtak,+
-                 double ortalamaOrtak,+
-                 int cinsiyet,
-                 int kademelerLisansLisansustu,
-                 int kademelerLiseOrtaokul,
-                 )                 
-                 */
                  
                  CF_Caller.CF_BUTTON_OGRENCI_ISLEMLERI_EKLE_Func(
                          girdilerString[1], 
@@ -752,7 +700,7 @@ public void CF_BUTTON_KITAP_EKLE_Func(
                  break;
                  
          // SQL_Q_sivilEkle(String uyeAd , String uyeSoyad , String uyeTCNO ,int uyeCinsiyet ,double uyelikUcreti,double uyeIndirimMiktari,
-        // double sivilGelirMiktari)  
+         // double sivilGelirMiktari)
              case CF_BUTTON_SIVIL_ISLEMLERI_EKLE:
              {
                  CF_Caller.CF_BUTTON_SIVIL_ISLEMLERI_EKLE_Func(
@@ -864,16 +812,7 @@ public void CF_BUTTON_KITAP_EKLE_Func(
                         degisecekLabel[3].setText("Yayınevi Sayfa Sayısı: "+databaseIslemler.SQL_Q_DBF_getYayineviKitapSayfaSayisi(girdilerInt[1]));
                         break;
                         
-                    //case CF_KATEGORI_YAYINEVI_LISTELE_LABEL: //yayinevi ve kategoriye gore filtreleme
-                        
-                        
-                      //  break;
-                 
-                        
-                  
-            
-                                              
-                        
+
                         default:
             System.out.println("TANIMLANMAMIS ENUM DEGERI :: enum CagrilacakFonksiyon | addButtonParams | pencereGUI_Component");
             break;
@@ -882,8 +821,6 @@ public void CF_BUTTON_KITAP_EKLE_Func(
                 }
             }
         });
-        
-  
 
         return button;
     }
