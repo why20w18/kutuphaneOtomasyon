@@ -1187,11 +1187,6 @@ public void DBSP_kitapFiyatlariAzaltmaYayinevine(double artimMiktari , int yayin
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- /*
-1- kitap verileri eklenmelidir
-2-sonra yazar ekle SQL_Q fonksiyonu cagrilmali ve yazarUlke = "BILINMEYEN" olarak eklenmelidir
-3-yayinevi ve kategoriler mevcut olan kategoriler yada yayinevlerinden secilmesi zorunlu kilindi o yuzden burada direkt ekleyecegiz
-*/
 public void SQL_Q_KitapEkle(String kitapAd, int kitapStok, Double kitapFiyat, String kitapISBN, 
                              int kitapSayfaSayisi, int kategoriID, int yayineviID, 
                              String yazarAd, String yazarSoyad){
@@ -2704,11 +2699,5 @@ public void SQL_Q_YazarLOG_List(DefaultTableModel model){
     }
 
 
-}
-   
-        
-        
-
-
-
+    }
 }//class DatabaseIslemler SON
