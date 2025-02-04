@@ -22,18 +22,6 @@ import java.util.List;
 import javax.swing.JComboBox;
 
 
-/*
-VERITABANINA BAGLANTI BURADA OTOMATIK YAPILIR : constructora gomduk
-
-pst --> PreparedStatement tipindendir
-SELECT                      => geriye resultset cevirir :: ResultSet rst = pst.executeQuery(); :: rst icinde sonuc kumesi bulunur calisan sorgunun ve adim adim icinden veri cekilebilir
-INSERT DELETE UPDATE        => geriye etkilenen satir sayisi cevirir :: int affectedRows = pst.executeUpdate()
-SELECT INSERT DELETE UPDATE => geriye eger resultSet donduyse true , geriye eger etkilenen satir say donduyse false ::: boolean status = pst.execut();
-
-geriye donen resultSet icinde (executQuery) veri olup olmadigini rst.next() while-if idiomlarinda kontrol edilebilir
-
-*/
-
 public class DatabaseIslemler {
     databaseBaglanti database;
     

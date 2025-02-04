@@ -32,36 +32,6 @@ import static packGuiSwing.CagrilacakFonksiyon.CF_BUTTON_PERSONEL_EKLE;
 import static packGuiSwing.CagrilacakFonksiyon.CF_TABLE_KATEGORI_YAYINEVI_TUMU;
 import static packGuiSwing.CagrilacakFonksiyon.CF_TANIMLANMADI;
 
-/*
-GUI KOMPONENT VE FONKSIYON BAGLAMA ADIMLARI
-1-ILK ONCE FONKSIYON ICIN ENUM DEGERI OLUSTURULUR
-2-FONKSIYON TANIMI componentadiFonksiyonlari CLASSLARINDA YAPILIR
-3-COMPONENT TIPINE GORE O COMPONENTIN FONKSIYONUNUN ICINE EKLENIR
-*/
-
-/*
-    addButtonParams HAKKINDA:
-        +DEKLERASYON        :   addButtonParams(String buttonText , ButonPozisyon butonPozisyon , CagrilacakFonksiyon butonFonksiyonu,String girdilerString[])
-        +addButton'dan FARKI:   addButton sadece parametre almayan fonksiyonlari butona basildigi anda calistirabilirken addButtonParams fonksiyonu icinde 
-                                parametre alan fonksiyonlari calistirmak amaclanarak yazilmistir
-        
-        +CALISMA MEKANIZMASI:   bunu yapmak icin ilk once TextFieldlarin(Kullanicinin girdi girdiği GUI komponenti) tum girdilerinin (ki bu textfieldlarda addTextField 
-                                fonksiyonuyla olusturuluyor pencerede dogru konuma yerlestirilebilmesi icin) dinlenmesi gerekiyor MEVCUT PENCERE KAÇ ADET TEXTFIELD VARSA
-                                bunun icin ListenerTextField(ArrayList<JTextField> textFieldsArrayList, String[] girdiListesi) fonksiyonunu kullanacagiz , ilk parametreyi
-                                saglamak bir ArrayList icine olusturulan tum TextFieldlari attiktan sonra ikinci parametre icine kullanicinin textfield icine girdi her inputu
-                                girdiListesi string arrayinin indexine yerlestiriyor sonrasinda girdiListesi string arrayi artik kullanici inputlarini ve hangi textfielda 
-                                girdigimizi gosterir haldeyken bunu addButtonParams fonksiyonuna parametre olarak yolluyoruz cunku her butona ayri bir fonksiyon atadik ve
-                                bu fonksiyonlar kullanicinin textfieldlara girdigi parametrelere gore islem yapiyor ONEMLI NOKTA buton fonksiyonun parametresi double=personelMaas
-                                yada int=yayineviID gibi olabilir bu durumda wrapper parse ile cevirmemiz gerekecektir yine kullanici null yada bosluk iceren girdiler
-                                girebilir yada hatayla bunları deneyebilir veritabaninda bunlarin probleme yol acmamasi icin TEMEL SEVIYE guvenlik onlemi olarak boolean ceviren
-                                ayri bir fonksiyon daha yazilmistir !checkGirdiStringISNULL_ISEMPTY => ilk parametre kontrole baslanacak girdiListesi indexi ve 
-                                ikinci parametre hangi indexe kadar kontrol edecegidir 
-                                EKLEME DURUMUNDA ---> ID disinda sona kadar kontrol PARAM1=1<PARAM2=girdiListe.length
-                                CIKARTMA DURUMUNDA--> SADECE ID KONTROLU PARAM1=0 ve PARAM2=1
-                                ÖRNEGIN:
-                                yayineviYonetim Classinda 3 adet textfield var soldan saga indexleri 0,1,2 seklinde girdiListesi string arrayine yerlestirilecektir
-*/
-
 enum ButonPozisyon{
         UST, 
         ALT, 

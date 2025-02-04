@@ -5,19 +5,6 @@ import packGuiSwing.mainGUI;
 import packDatabase.databaseBaglanti;
 import packDatabase.DatabaseIslemler;
 
-/*
-EKLEME:PENCERE_ADI	ZORUNLU_ALANLAR İLE EKLENİR
-ÇIKARTMA:PENCERE_ADI	ZORUNLU_ALANLAR İLE ÇIKARTILIR
-GÜNCELLEME:PENCERE_ADI	İD DEĞERİ VE İSTENEN ALANLAR GİRİLEREK GÜNCELLENİR
-*/
-
-/*
-eklenecekler:
-cursor kitaparttirim
-log dosyası trigger
-disa tablo aktarma
-*/
-
 public class Main {
     
     public static void main(String[] args){        
