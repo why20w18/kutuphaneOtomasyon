@@ -33,24 +33,6 @@ public class kitapYonetimIstatistikler {
         if(isLayoutActive == true){
             kitapyonetimistatistikler_frame.initLayout();
 
-
-//////////////label ekleyip icinde////////////////////////////////////////////////////////////////////////////// 
-            //1-toplam kitap sayisi+
-            // -kategoriye gore toplam kitap sayisi++++++++ 
-            //2-toplam kitap sayfa sayisi+
-            //  -kategoriye gore toplam sayfa sayisi+++++++loop kurup idleri cekip icinde cagiririz
-            //3-toplam yayinevi sayisi+
-            //  -yayinevine gore kitap ve sayfa sayisi
-            //4-toplam yazar sayisi+
-            //5-kac farkli ulkeden yazar var
-            //6-toplam kategori sayisi+
-            //7-her kategoriden kac kitap var elimizde +
-            //8-ortalama kitap fiyatlari+
-            //9-en pahali kitap+
-            //10-en ucuz kitap+
-            //11-en kisa kitap+
-            //12-en uzun kitap+
-//////////////label ekleyip icinde//////////////////////////////////////////////////////////////////////////////
             int punto = 15;
             JLabel toplamKitapSayisi =      kyista_component.addLabel("Toplam Kitap Sayısı: "+databaseIslemler.SQL_Q_DBF_getKitapSayisi(), punto, ButonPozisyon.SOL);
             JLabel toplamKitapSayfaSayisi = kyista_component.addLabel("Toplam Kitap Sayfa Sayısı : "+databaseIslemler.SQL_Q_DBF_getToplamSayfaSayisi(),punto, ButonPozisyon.SOL);
