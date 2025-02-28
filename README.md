@@ -1,21 +1,8 @@
 # Kütüphane Otomasyon Programı
 
 
-## pencereGUI_Component CLASS
++ program icindeki yorum satirlari
 
-* Buradaki yazılar program içindeki yorum satırlarının çıkartılmasından oluşmaktadır
-
-* Programdaki tüm AWT/SWING Componentleri özelleştirilip soyutlanmıştır böylece kullanım kolaylığı sağlanmıştır 
-  aynı zamanda farklı Java programlarında da taşınabilir şekilde kullanılabilir
-
-* Programdaki AWT/SWING componentleri pencereGUI_Component classında tanımlanmıştır ve temel mantığı 
-  tek fonksiyon çağrılsa da içindeki CagrilacakFonksiyon enum değerine göre belirli bir fonksiyonu çağırma 
-  aynı zamanda generic componentPozisyonladiricisi fonksiyonu yardımıyla ButonPozisyon enum değerine göre
-  pencereye yerleştirme üzerine kuruludur , gerekli görüldüğü yerlerde fonksiyonlar genişletilmiş otomatik
-  veritabanından tablo çekme yerleştirme ve otomatik combobox doldurma gibi fonksiyonlar ve daha fazlası 
-  eklenmiştir
-
-* pencereGUI ve pencereGUI_Component Fonksiyonların deklerasyonları ve açıklamaları aşağıdadır programın içinden buraya taşınmıştır
 ```
 + pencereGUI_Component icinde 5 adet class 2 adet enum tanımı vardır
 + classlar:
@@ -143,7 +130,7 @@ geriye donen resultSet icinde (executQuery) veri olup olmadigini rst.next() whil
 
 ## Konsol
 
- * Konsol üzerinden doğrudan DDL ve DML komut setleri çalıştırılabilir şu anda tam olarak soyutlanıp güvenlik testleri yapılmasada kullanılabilir
+ * Konsol üzerinden doğrudan DDL ve DML komut setleri çalıştırılabilir şu anda tam olarak soyutlanıp güvenlik testleri yapılmasa da kullanılabilir
  ```
  > help             -> komutların kullanımını gösteren yardım sayfası
  > cls              -> konsol ekranını temizler
